@@ -56,6 +56,8 @@ function SpawnSimfphysVehicle( Player, vname, tr )
 
 	if ( !vehicle ) then return end
 	
+	if ( !gamemode.Call( "PlayerSpawnVehicle", Player, vehicle.model, vname, vehicle ) ) then return end
+	
 	if ( !tr ) then
 		tr = Player:GetEyeTraceNoCursor()
 	end
