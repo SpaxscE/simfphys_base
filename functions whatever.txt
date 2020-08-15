@@ -1,84 +1,193 @@
-entity = the vehicle base entity, NOT THE SEAT
+# Documentation:
+## (entity is vehicle base)
 
+```lua
 ply:GetSimfphys()  -- called on a player, returns the simfphys base entity (gmod_sent_vehicle_fphysics_base)
+```
+```lua
 ply:IsDrivingSimfphys()  -- called on a player, returns true when the player is DRIVING the simfphys vehicle. returns false for passengers.
+```
 
------- shared
+## Shared
+```lua
 entity:GetSteerSpeed()	-- returns a number
+```
+```lua
 entity:GetFastSteerConeFadeSpeed()	-- returns a number
+```
+```lua
 entity:GetFastSteerAngle()	-- returns a number
+```
 
+```lua
 entity:GetFrontSuspensionHeight()	-- returns a number
+```
+```lua
 entity:GetRearSuspensionHeight()	-- returns a number
+```
 
+```lua
 entity:GetEngineSoundPreset()	-- returns a number
+```
 
+```lua
 entity:GetRPM() -- gets the current engine rpm. returns a number
+```
 
+```lua
 entity:GetIdleRPM()	-- returns a number
+```
+```lua
 entity:GetLimitRPM()	-- returns a number
+```
+```lua
 entity:GetPowerBandStart()	-- returns a number
+```
+```lua
 entity:GetPowerBandEnd()	-- returns a number
+```
+```lua
 entity:GetMaxTorque()	-- returns a number
+```
+```lua
 entity:GetRevlimiter() -- returns a bool
+```
 
+```lua
 entity:GetTurboCharged() -- returns a bool
+```
+```lua
 entity:GetSuperCharged() -- returns a bool
+```
+```lua
 entity:GetBackFire() -- returns a bool
+```
+```lua
 entity:GetDoNotStall() -- returns a bool
+```
 
+```lua
 entity:GetClutch() -- returns a number
+```
+```lua
 entity:GetThrottle() -- returns a number
+```
 
+```lua
 entity:GetGear() -- returns a number  (1 = reverse, 2 = neutral, 3 = first gear, 4 = second gear, 5 = third gear, ..., ...)
+```
+```lua
 entity:GetDifferentialGear() -- returns a number 
+```
 
+```lua
 entity:GetBrakePower() -- returns a number
+```
+```lua
 entity:GetPowerDistribution() -- returns a number (1 = rear wheel drive, -1 = front wheel drive, 0 = all wheel drive with power distributed equally on front and rear wheels)
+```
+```lua
 entity:GetEfficiency() -- returns a number
+```
+```lua
 entity:GetMaxTraction() -- returns a number
+```
+```lua
 entity:GetTractionBias() -- returns a number
+```
+```lua
 entity:GetTireSmokeColor() -- returns a vector
+```
 
+```lua
 entity:GetIsCruiseModeOn() -- returns a bool,  is the cruise control enabled?
+```
+```lua
 entity:GetIsBraking() -- returns true when braking
+```
+```lua
 entity:GetLightsEnabled() -- returns true when the lowbeams are active
+```
+```lua
 entity:GetLampsEnabled() -- returns true when the highbeams are active
+```
 
+```lua
 entity:GetEMSEnabled() -- returns true when the emergency system is active
+```
 
+```lua
 entity:GetFogLightsEnabled() -- returns true when the fog lights are active
+```
+```lua
 entity:GetHandBrakeEnabled() -- returns true when the handbrake is active
+```
 
+```lua
 entity:GetVehicleSteer() -- returns a number, (from -1 to 1, its used for the steering poseparameter for the player)
+```
+```lua
 entity:GetDriver() -- returns an entity
+```
+```lua
 entity:GetDriverSeat() -- returns an entity
+```
+```lua
 entity:GetActive() -- returns true when the vehicle is active. note that the engine can still be inactive even when the vehicle itself is active
+```
 
+```lua
 entity:GetSpawn_List() -- returns the vehicle spawnname as string
+```
+```lua
 entity:GetLights_List() -- returns the lights listname as string
+```
 
+```lua
 entity:GetSoundoverride() -- returns an string
+```
 
+```lua
 entity:GetCurHealth()  -- returns the current health as number
+```
+```lua
 entity:GetMaxHealth()  -- returns the max health as number
+```
 
-
--- server
+## SERVER
+```lua
 entity:SteerVehicle( number ) -- sets the ANGLE of the steering.
+```
+```lua
 entity:Lock()  -- locks the vehicle
+```
+```lua
 entity:UnLock() -- unlocks the vehicle
+```
 
+```lua
 entity:EngineActive()	-- returns true if the engine is running. false when not
+```
+```lua
 entity:StopEngine()	-- stops the engine
+```
+```lua
 entity:StartEngine( bKeepGear = false )  -- starts the engine and resets to neutral gear if bKeepGear is nil or false
+```
+```lua
 entity:StallAndRestart( ntime = 1, bKeepGear = false )  -- stalls the engine and restarts it after set amount of time.
+```
 
+```lua
 entity:DamagedStall() -- stalls the engine and restarts with backfiring
+```
 
+```lua
 entity:SetMaxHealth( nHealth ) -- sets the max health
+```
+```lua
 entity:SetCurHealth( nHealth ) -- sets the current health
-
+```
 __________________________________________________________________________
 -- vehicle controling without driver
 
@@ -87,19 +196,26 @@ there is no support for vehicle controlling yet but there is a hacky way to do b
 first step is to decide if the vehicle should be manual or automatic.
 Every vehicle without driver is in automatic transmission mode by default.
 If you want to change that you have to do:
+```lua
 entity.ForceTransmission = 2  --(1 = automatic, 2 = manual)
+```
 
 Now we have to set the vehicle to active.
 Note that an active vehicle doesn't mean that the engine will be running. Its just so the car sets itself into "waiting" state and sets the physics correctly:
+```lua
 entity:SetActive( true ) 
+```
 
 next step is to start the engine
+```lua
 entity:StartEngine()
+```
 
 ok. Now the vehicle should be running and be moveable with the physgun without the wheels locking up.
 
 To control the vehicle you have overwrite these variables (they go from 0 - 1):
 
+```lua
 entity.PressedKeys["joystick_steer_left"] = 0
 entity.PressedKeys["joystick_steer_right"] = 0
 entity.PressedKeys["joystick_brake"] = 0      -- this is also used as "reverse throttle" when in automatic mode
@@ -112,12 +228,11 @@ entity.PressedKeys["joystick_air_w"] = 0
 entity.PressedKeys["joystick_air_a"] = 0
 entity.PressedKeys["joystick_air_s"] = 0
 entity.PressedKeys["joystick_air_d"] = 0
+```
 
 i think its obvious which variable does what.
 
 for steering you can use both the joystick variables or the function:
+```lua
 entity:SteerVehicle( number )  -- sets the steering ANGLE. Unlike the joystick variables this sets the actual steering angle
-
-
-
-
+```
