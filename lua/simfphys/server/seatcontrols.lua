@@ -52,7 +52,7 @@ hook.Add( "PlayerButtonDown", "!!!simfphysButtonDown", function( ply, button )
 			end
 		end
 	else
-		for _, Pod in pairs( vehicle:GetPassengerSeats() ) do
+		for _, Pod in ipairs( vehicle:GetPassengerSeats() ) do
 			if IsValid( Pod ) then
 				if Pod:GetNWInt( "pPodIndex", 3 ) == simfphys.pSwitchKeys[ button ] then
 					if not IsValid( Pod:GetDriver() ) then
