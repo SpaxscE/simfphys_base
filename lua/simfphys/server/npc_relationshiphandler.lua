@@ -23,7 +23,7 @@ local function GetNPCs()
 	if NextNPCsGetAll < Time then
 		NextNPCsGetAll = Time + FrameTime()
 
-		for index, npc in pairs( NPCsStored ) do
+		for index, npc in ipairs( NPCsStored ) do
 			if not IsValid( npc ) then
 				NPCsStored[ index ] = nil
 			end
@@ -55,7 +55,7 @@ hook.Add( "Think", "!!!!!!!simfphysNPCRelationshipHandler", function()
 			local VEHICLE = VEHICLE_LIST[ CURRENT_STEP ]
 			if not IsValid( VEHICLE ) then return end
 
-			for _, NPC in pairs( NPC_LIST ) do
+			for _, NPC in ipairs( NPC_LIST ) do
 				if IsValid( NPC ) then
 					local Enemy = NPC:GetEnemy()
 					if IsValid( Enemy ) then
@@ -64,7 +64,7 @@ hook.Add( "Think", "!!!!!!!simfphysNPCRelationshipHandler", function()
 
 							if VEHICLE == Enemy:GetSimfphys() then
 								NPC:AddEntityRelationship( VEHICLE, D_HT, 99 )
-								for _, wheel in pairs( VEHICLE.Wheels ) do
+								for _, wheel in ipairs( VEHICLE.Wheels ) do
 									if IsValid( wheel ) then
 										NPC:AddEntityRelationship( wheel, D_HT, 99 )
 									end
@@ -79,7 +79,7 @@ hook.Add( "Think", "!!!!!!!simfphysNPCRelationshipHandler", function()
 								if IsValid( NPC.simfphysLastEnemy ) then
 									if NPC.simfphysLastEnemy:GetSimfphys() ~= VEHICLE then
 										NPC:AddEntityRelationship( VEHICLE, D_LI, 99 )
-										for _, wheel in pairs( VEHICLE.Wheels ) do
+										for _, wheel in ipairs( VEHICLE.Wheels ) do
 											if IsValid( wheel ) then
 												NPC:AddEntityRelationship( wheel, D_LI, 99 )
 											end
