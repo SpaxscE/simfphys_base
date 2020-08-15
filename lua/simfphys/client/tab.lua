@@ -443,7 +443,7 @@ local function buildserversettingsmenu( self )
 		local NewTractionData = {}
 		local DemSliders = {}
 		y = y + 15
-		for k, v in pairs( simfphys.TractionData ) do
+		for k, v in ipairs( simfphys.TractionData ) do
 			DemSliders[k] = vgui.Create( "DNumSlider", self.PropPanel)
 			DemSliders[k]:SetPos( 30, y )
 			DemSliders[k]:SetSize( 345, 30 )
@@ -499,7 +499,7 @@ local function buildserversettingsmenu( self )
 			NewTractionData["rock"] = 1
 			NewTractionData["wood"] = 1
 			
-			for k, v in pairs( NewTractionData ) do
+			for k, v in ipairs( NewTractionData ) do
 				DemSliders[k]:SetValue( v )
 			end
 			
@@ -578,7 +578,7 @@ local function buildserversettingsmenu( self )
 		Label:SizeToContents()
 
 		y = y + 15
-		for k, v in pairs( simfphys.TractionData ) do
+		for k, v in ipairs( simfphys.TractionData ) do
 			local tractionLabel = vgui.Create( "DLabel", self.PropPanel )
 			tractionLabel:SetPos( 105, y )
 			tractionLabel:SetText( k )
@@ -610,7 +610,7 @@ hook.Add( "SimfphysPopulateVehicles", "AddEntityContent", function( pnlContent, 
 	-- Add this list into the tormoil
 	local Vehicles = list.Get( "simfphys_vehicles" )
 	if Vehicles then
-		for k, v in pairs( Vehicles ) do
+		for k, v in ipairs( Vehicles ) do
 
 			v.Category = v.Category or "Other"
 			Categorised[ v.Category ] = Categorised[ v.Category ] or {}
