@@ -23,7 +23,7 @@ local HUD_1 = Material( "simfphys/hud/hud" )
 local HUD_2 = Material( "simfphys/hud/hud_center" )
 local HUD_3 = Material( "simfphys/hud/hud_center_red" )
 local HUD_5 = file.Exists( "materials/simfphys/hud/hud_5.vmt", "GAME") and Material( "simfphys/hud/hud_5" ) or false
-local ForceSimpleHud = not file.Exists( "materials/simfphys/hud/hud.vmt", "GAME" ) -- lets check if the background material exists, if not we will force the old hud to prevent fps drop
+local ForceSimpleHud = not file.Exists( "materials/simfphys/hud/hud.vmt", "GAME" )
 local smHider = 0
 
 local ShowHud = false
@@ -129,21 +129,19 @@ hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	net.SendToServer()
 end)
 
+local color = Color( 240, 230, 200, 255 )
+local color1 = Color(255,255,255,150)
+local color2 = Color(120,0,0,230)
+local color3 = Color( 255, 0, 0, 255 )
+local color4 = Color(0,254,235,200)
 local function drawsimfphysHUD(vehicle,SeatCount)
 	if isMouseSteer and ShowHud_ms then
 		local MousePos = ms_pos_x
 		local m_size = sizex * 0.15
 		
-		draw.SimpleText( "V", "simfphysfont", sizex * 0.5 + MousePos * m_size - 1, sizey * 0.45, Color( 240, 230, 200, 255 ), 1, 1 )
-		draw.SimpleText( "[", "simfphysfont", sizex * 0.5 - m_size * 1.05, sizey * 0.45, Color( 240, 230, 200, 180 ), 1, 1 )
-		draw.SimpleText( "]", "simfphysfont", sizex * 0.5 + m_size * 1.05, sizey * 0.45, Color( 240, 230, 200, 180 ), 1, 1 )
-		
-		if (ms_deadzone > 0) then
-			draw.SimpleText( "^", "simfphysfont", sizex * 0.5 - (ms_deadzone / 16) * m_size, sizey * 0.453, Color( 240, 230, 200, 180 ), 1, 2 )
-			draw.SimpleText( "^", "simfphysfont", sizex * 0.5 + (ms_deadzone / 16) * m_size, sizey * 0.453, Color( 240, 230, 200, 180 ), 1, 2 )
-		else
-			draw.SimpleText( "^", "simfphysfont", sizex * 0.5, sizey * 0.453, Color( 240, 230, 200, 180 ), 1, 2 )
-		end
+		draw.SimpleText( "V", "simfphysfont", sizex * 0.5 + MousePos * m_size - 1, sizey * 0.45, color_white, 1, 1 )
+		draw.SimpleText( "[", "simfphysfont", sizex * 0.5 - m_size * 1.05, sizey * 0.45, color_white, 1, 1 )
+		draw.SimpleText( "]", "simfphysfont", sizex * 0.5 + m_size * 1.05, sizey * 0.45, color_white, 1, 1 )
 	end
 	
 	if not ShowHud then return end
@@ -228,12 +226,9 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		draw.NoTexture()
 		
 		if AltHudarcs then
-			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,startang,math.min(endang,ang_pend),1,Color(255,255,255,150),true)
-			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,ang_pend,360,1,Color(120,0,0,230),true)
-			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,math.Round(ang_pend - 1,0),startang + (s_smoothrpm / maxrpm) * 255,1,Color(255,0,0,140),true)
-			--draw.Arc(x + o_x,y + o_y,radius / 3.5,radius / 66,startang,360,15,Color(255,255,255,50),true)
-			--draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,startang,ang_pend,1,Color(150,150,150,50),true)
-			--draw.Arc(x + o_x,y + o_y,radius / 5,radius / 70,0,360,15,center_ncol,true)
+			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,startang,math.min(endang,ang_pend),1,color_white,true)
+			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,ang_pend,360,1,color_white,true)
+			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,math.Round(ang_pend - 1,0),startang + (s_smoothrpm / maxrpm) * 255,1,color_white,true)
 		else
 			if HUD_5 then
 				surface.SetMaterial( HUD_5 )
@@ -266,7 +261,7 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 			local n_col_off
 			if (i < powerbandend) then
 				n_col_off = Color(150, 150, 150, 150)
-				n_col_on = Color(255, 255, 255, 255)
+				n_col_on = color_white
 			else
 				n_col_off = Color( 150, 0, 0, 150)
 				n_col_on = Color( 255, 0, 0, 255 )
@@ -281,22 +276,22 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 				step = 1
 				surface.DrawLine( x + cos_a * radius / 1.3 + o_x, y + sin_a * radius / 1.3 + o_y, x + cos_a * radius + o_x, y + sin_a * radius + o_y)
 				local printnumber = tostring(i / 1000)
-				draw.SimpleText(printnumber, "simfphysfont3", x + cos_a * radius / 1.5 + o_x, y + sin_a * radius / 1.5 + o_y,u_col, 1, 1 )
+				draw.SimpleText(printnumber, "simfphysfont3", x + cos_a * radius / 1.5 + o_x, y + sin_a * radius / 1.5 + o_y,color_white, 1, 1 )
 			else
 				surface.DrawLine( x + cos_a * radius / 1.05 + o_x, y + sin_a * radius / 1.05 + o_y, x + cos_a * radius + o_x, y + sin_a * radius + o_y)
 			end
 		end
 		
-		local center_ncol = in_red and Color(0,254,235,200) or Color( 255, 0, 0, 255 )
+		local center_ncol = in_red and color4 or color3
 		
-		surface.SetDrawColor( in_red and Color(255,255,255,255) or Color( 255, 0, 0, 255 ) )
+		surface.SetDrawColor( in_red and color_white or color3 )
 		surface.DrawLine( x + c_ang * radius / 3.5 + o_x, y + s_ang * radius / 3.5 + o_y, x + c_ang * radius + o_x, y + s_ang * radius + o_y)
 		surface.SetDrawColor( 255, 255, 255, 255 )
 		
-		draw.SimpleText( (gear == 1 and "R" or gear == 2 and "N" or (gear - 2)), "simfphysfont2", x * 0.999 + o_x, y * 0.996 + o_y, center_ncol, 1, 1 )
+		draw.SimpleText( (gear == 1 and "R" or gear == 2 and "0" or (gear - 2)), "simfphysfont2", x * 0.999 + o_x, y * 0.996 + o_y, center_ncol, 1, 1 )
 		
 		local print_text = Hudmph and "MPH" or "KM/H"
-		draw.SimpleText( print_text, "simfphysfont3", x + radius * 0.82 + o_x, y + radius * 0.16 + o_y, Color(255,255,255,50), 1, 1 )
+		draw.SimpleText( print_text, "simfphysfont3", x + radius * 0.82 + o_x, y + radius * 0.16 + o_y, color_white, 1, 1 )
 		
 		local printspeed = Hudmph and (Hudreal and mph or wiremph) or (Hudreal and kmh or wirekmh)
 		
@@ -310,15 +305,15 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		local col2 = (printspeed >= 10) and col_off or col_on
 		local col3 = (printspeed >= 100) and col_off or col_on
 		
-		draw.SimpleText( digit_1, "simfphysfont4", x + radius * 0.84 + o_x, y + radius * 0.65 + o_y, col1, 1, 1 )
-		draw.SimpleText( digit_2/ 10, "simfphysfont4", x + radius * 0.48 + o_x, y + radius * 0.65 + o_y, col2, 1, 1 )
-		draw.SimpleText( digit_3 / 100, "simfphysfont4", x + radius * 0.12 + o_x, y + radius * 0.65 +  o_y, col3, 1, 1 )
+		draw.SimpleText( digit_1, "simfphysfont4", x + radius * 0.84 + o_x, y + radius * 0.65 + o_y, color_white, 1, 1 )
+		draw.SimpleText( digit_2/ 10, "simfphysfont4", x + radius * 0.48 + o_x, y + radius * 0.65 + o_y, color_white, 1, 1 )
+		draw.SimpleText( digit_3 / 100, "simfphysfont4", x + radius * 0.12 + o_x, y + radius * 0.65 +  o_y, color_white, 1, 1 )
 		
 		sm_throttle = sm_throttle + (throttle - sm_throttle) * 0.1
 		local t_size = (sizey * 0.1)
 		surface.SetDrawColor( Color(150,150,150,50) )
 		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + o_y, radius * 0.08, sizey * 0.1 )
-		surface.SetDrawColor( Color(255,255,255,150) )
+		surface.SetDrawColor( color_white )
 		surface.DrawRect( x + radius * 1.22 + o_x, y + radius * 0.36 + t_size - t_size * math.min(sm_throttle / 100,1) + o_y, radius * 0.08, t_size * math.min(sm_throttle / 100,1) )
 		
 		local fueluse = vehicle:GetFuelUse()
@@ -340,9 +335,8 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 			calc_fueluse = 235.214 / calc_fueluse
 		end
 		local print_fueluse = (ecospeed > 0 and vehicle:GetFuel() > 0) and tostring( math.Round( calc_fueluse,0) ) or "N/A"
-		--draw.SimpleText( tostring( math.Round( fueluse,2) ).." L/min", "simfphysfont3", x + o_x + radius, y + o_y + radius * 1.04, Color(150,150,150,150), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
-		draw.SimpleText( print_fueluse, "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 0.85, Color(150,150,150,150), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
-		draw.SimpleText( Hudmpg and "MPG" or "L/100KM", "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 1.02, Color(150,150,150,150), TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
+		draw.SimpleText( tostring( math.Round( fueluse,2) ).." L/min", "simfphysfont3", x + o_x + radius, y + o_y + radius * 1.04, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP )
+		draw.SimpleText( print_fueluse, "simfphysfont3", x + o_x - radius * 0.85, y + o_y + radius * 0.85, color_white, TEXT_ALIGN_LEFT, TEXT_ALIGN_TOP )
 		
 		return
 	end
@@ -490,7 +484,7 @@ local function PaintSeatSwitcher( ent, pSeats, SeatCount )
 	local MySeat = me:GetVehicle():GetNWInt( "pPodIndex", -1 )
 	
 	local Passengers = {}
-	for _, ply in pairs( player.GetAll() ) do
+	for _, ply in ipairs( player.GetAll() ) do
 		if ply:GetSimfphys() == ent then
 			local Pod = ply:GetVehicle()
 			Passengers[ Pod:GetNWInt( "pPodIndex", -1 ) ] = ply:GetName()
@@ -501,21 +495,21 @@ local function PaintSeatSwitcher( ent, pSeats, SeatCount )
 	me.oldPassengersmf = me.oldPassengersmf or {}
 	
 	local Time = CurTime()
-	for k, v in pairs( Passengers ) do
+	for k, v in ipairs( Passengers ) do
 		if me.oldPassengersmf[k] ~= v then
 			me.oldPassengersmf[k] = v
 			me.SwitcherTime = Time + 2
 		end
 	end
 	
-	for k, v in pairs( me.oldPassengersmf ) do
+	for k, v in ipairs( me.oldPassengersmf ) do
 		if not Passengers[k] then
 			me.oldPassengersmf[k] = nil
 			me.SwitcherTime = Time + 2
 		end
 	end
 	
-	for _, v in pairs( simfphys.pSwitchKeysInv ) do
+	for _, v in ipairs( simfphys.pSwitchKeysInv ) do
 		if input.IsKeyDown(v) then
 			me.SwitcherTime = Time + 2
 		end
@@ -533,7 +527,7 @@ local function PaintSeatSwitcher( ent, pSeats, SeatCount )
 		yPos = y + radius * 1.2 - (SeatCount + 1) * 30 - 10 + hudoffset_y * screenh
 	end
 	
-	for _, Pod in pairs( pSeats ) do
+	for _, Pod in ipairs( pSeats ) do
 		local I = Pod:GetNWInt( "pPodIndex", -1 )
 		if I >= 0 then
 			if I == MySeat then
@@ -558,7 +552,7 @@ local function PaintSeatSwitcher( ent, pSeats, SeatCount )
 				draw.DrawText( "["..I.."]", "SimfphysFont_seatswitcher", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 			else
 				if Passengers[I] then
-					draw.DrawText( "[^"..I.."]", "SimfphysFont_seatswitcher", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
+					draw.DrawText( "["..I.."]", "SimfphysFont_seatswitcher", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 				else
 					draw.DrawText( "["..I.."]", "SimfphysFont_seatswitcher", X + 17 + Offset - HiderOffset, yPos + I * 30 + 2.5, Color( 255, 255, 255, Alpha1 ), TEXT_ALIGN_CENTER )
 				end
@@ -619,15 +613,10 @@ hook.Add( "HUDPaint", "simfphys_HUD", function()
 	end
 end)
 
--- draw.arc function by bobbleheadbob
--- https://dl.dropboxusercontent.com/u/104427432/Scripts/drawarc.lua
--- https://facepunch.com/showthread.php?t=1438016&p=46536353&viewfull=1#post46536353
-
 function surface.PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bClockwise)
 	local triarc = {}
 	local deg2rad = math.pi / 180
-	
-	-- Correct start/end ang
+
 	local startang,endang = startang or 0, endang or 0
 	if bClockwise and (startang < endang) then
 		local temp = startang
@@ -641,28 +630,23 @@ function surface.PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bC
 		temp = nil
 	end
 	
-	
-	-- Define step
 	local roughness = math.max(roughness or 1, 1)
 	local step = roughness
 	if bClockwise then
 		step = math.abs(roughness) * -1
 	end
-	
-	
-	-- Create the inner circle's points.
+
 	local inner = {}
 	local r = radius - thickness
 	for deg=startang, endang, step do
 		local rad = deg2rad * deg
+
 		table.insert(inner, {
 			x=cx+(math.cos(rad)*r),
 			y=cy+(math.sin(rad)*r)
 		})
 	end
-	
-	
-	-- Create the outer circle's points.
+
 	local outer = {}
 	for deg=startang, endang, step do
 		local rad = deg2rad * deg
