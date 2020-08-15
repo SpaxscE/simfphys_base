@@ -157,7 +157,7 @@ hook.Add("JoystickInitialize", "simfphys_joystick", function()
 	
 	hook.Add("Think","simfphys_joystickhandler",function()
 		
-		for i,ply in pairs( player.GetAll() ) do
+		for i,ply in ipairs( player.GetAll() ) do
 			
 			if ply:IsConnected() then
 				local vehicle = ply:GetVehicle()
@@ -168,7 +168,7 @@ hook.Add("JoystickInitialize", "simfphys_joystick", function()
 				
 				if vehicle.base:GetDriverSeat() ~= vehicle then return end
 				
-				for k,v in pairs( simfphys.jcon ) do
+				for k,v in ipairs( simfphys.jcon ) do
 					if istable(v) and v.IsJoystickReg then
 						local val = joystick.Get( ply, v.uid )
 						
