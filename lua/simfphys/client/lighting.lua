@@ -33,7 +33,7 @@ RearProjectedLights = GetConVar( "cl_simfphys_rearlamps" ):GetBool()
 Shadows = GetConVar( "cl_simfphys_shadows" ):GetBool()
 
 local function BodyGroupIsValid( bodygroups, entity )
-	for index, groups in pairs( bodygroups ) do
+	for index, groups in ipairs( bodygroups ) do
 		local mygroup = entity:GetBodygroup( index )
 		for g_index = 1, table.Count( groups ) do
 			if (mygroup == groups[g_index]) then return true end
@@ -52,13 +52,13 @@ local function UpdateSubMats(ent, Lowbeam, Highbeam, IsBraking, IsReversing )
 		
 		if ent.WasTurningLeft ~= IsTurningLeft or ent.WasTurningRight ~= IsTurningRight or ent.WasFlashing ~= IsFlashing then
 			if ent.SubMaterials.turnsignals.left then
-				for k,v in pairs( ent.SubMaterials.turnsignals.left ) do
+				for k,v in ipairs( ent.SubMaterials.turnsignals.left ) do
 					local mat = (IsFlashing and IsTurningLeft) and v or ""
 					ent:SetSubMaterial( k, mat )
 				end
 			end
 			if ent.SubMaterials.turnsignals.right then
-				for k,v in pairs( ent.SubMaterials.turnsignals.right ) do
+				for k,v in ipairs( ent.SubMaterials.turnsignals.right ) do
 					local mat = (IsFlashing and IsTurningRight) and v or ""
 					ent:SetSubMaterial( k, mat )
 				end
@@ -77,27 +77,27 @@ local function UpdateSubMats(ent, Lowbeam, Highbeam, IsBraking, IsReversing )
 			if ent.SubMaterials.on_highbeam then
 				if not IsReversing and not IsBraking then
 					if ent.SubMaterials.on_highbeam.Base then
-						for k,v in pairs( ent.SubMaterials.on_highbeam.Base ) do
+						for k,v in ipairs( ent.SubMaterials.on_highbeam.Base ) do
 							ent:SetSubMaterial( k, v )
 						end
 					end
 				elseif IsBraking then
 					if IsReversing then
 						if ent.SubMaterials.on_highbeam.Brake_Reverse then
-							for k,v in pairs( ent.SubMaterials.on_highbeam.Brake_Reverse ) do
+							for k,v in ipairs( ent.SubMaterials.on_highbeam.Brake_Reverse ) do
 								ent:SetSubMaterial( k, v )
 							end
 						end
 					else
 						if ent.SubMaterials.on_highbeam.Brake then
-							for k,v in pairs( ent.SubMaterials.on_highbeam.Brake ) do
+							for k,v in ipairs( ent.SubMaterials.on_highbeam.Brake ) do
 								ent:SetSubMaterial( k, v )
 							end
 						end
 					end
 				else
 					if ent.SubMaterials.on_highbeam.Reverse then
-						for k,v in pairs( ent.SubMaterials.on_highbeam.Reverse ) do
+						for k,v in ipairs( ent.SubMaterials.on_highbeam.Reverse ) do
 							ent:SetSubMaterial( k, v )
 						end
 					end
@@ -107,27 +107,27 @@ local function UpdateSubMats(ent, Lowbeam, Highbeam, IsBraking, IsReversing )
 			if ent.SubMaterials.on_lowbeam then
 				if not IsReversing and not IsBraking then
 					if ent.SubMaterials.on_lowbeam.Base then
-						for k,v in pairs( ent.SubMaterials.on_lowbeam.Base ) do
+						for k,v in ipairs( ent.SubMaterials.on_lowbeam.Base ) do
 							ent:SetSubMaterial( k, v )
 						end
 					end
 				elseif IsBraking then
 					if IsReversing then
 						if ent.SubMaterials.on_lowbeam.Brake_Reverse then
-							for k,v in pairs( ent.SubMaterials.on_lowbeam.Brake_Reverse ) do
+							for k,v in ipairs( ent.SubMaterials.on_lowbeam.Brake_Reverse ) do
 								ent:SetSubMaterial( k, v )
 							end
 						end
 					else
 						if ent.SubMaterials.on_lowbeam.Brake then
-							for k,v in pairs( ent.SubMaterials.on_lowbeam.Brake ) do
+							for k,v in ipairs( ent.SubMaterials.on_lowbeam.Brake ) do
 								ent:SetSubMaterial( k, v )
 							end
 						end
 					end
 				else
 					if ent.SubMaterials.on_lowbeam.Reverse then
-						for k,v in pairs( ent.SubMaterials.on_lowbeam.Reverse ) do
+						for k,v in ipairs( ent.SubMaterials.on_lowbeam.Reverse ) do
 							ent:SetSubMaterial( k, v )
 						end
 					end
@@ -138,27 +138,27 @@ local function UpdateSubMats(ent, Lowbeam, Highbeam, IsBraking, IsReversing )
 		if ent.SubMaterials.off then
 			if not IsReversing and not IsBraking then
 				if ent.SubMaterials.off.Base then
-					for k,v in pairs( ent.SubMaterials.off.Base ) do
+					for k,v in ipairs( ent.SubMaterials.off.Base ) do
 						ent:SetSubMaterial( k, v )
 					end
 				end
 			elseif IsBraking then
 				if IsReversing then
 					if ent.SubMaterials.off.Brake_Reverse then
-						for k,v in pairs( ent.SubMaterials.off.Brake_Reverse ) do
+						for k,v in ipairs( ent.SubMaterials.off.Brake_Reverse ) do
 							ent:SetSubMaterial( k, v )
 						end
 					end
 				else
 					if ent.SubMaterials.off.Brake then
-						for k,v in pairs( ent.SubMaterials.off.Brake ) do
+						for k,v in ipairs( ent.SubMaterials.off.Brake ) do
 							ent:SetSubMaterial( k, v )
 						end
 					end
 				end
 			else
 				if ent.SubMaterials.off.Reverse then
-					for k,v in pairs( ent.SubMaterials.off.Reverse ) do
+					for k,v in ipairs( ent.SubMaterials.off.Reverse ) do
 						ent:SetSubMaterial( k, v )
 					end
 				end
@@ -174,7 +174,7 @@ end
 
 local function ManageProjTextures()
 	if vtable then
-		for i, ent in pairs(vtable) do
+		for i, ent in ipairs(vtable) do
 			if IsValid(ent) then
 				local vel = ent:GetVelocity() * RealFrameTime()
 				
@@ -192,7 +192,7 @@ local function ManageProjTextures()
 				
 				UpdateSubMats(ent, ent.triggers[1], ent.triggers[2], ent.triggers[4], ent.triggers[5] )
 				
-				for i, proj in pairs( ent.Projtexts ) do
+				for i, proj in ipairs( ent.Projtexts ) do
 					local trigger = ent.triggers[proj.trigger]
 					local enable = ent.triggers[1] or trigger
 					
@@ -345,7 +345,7 @@ local function SetupProjectedTextures( ent , vehiclelist )
 	end
 	
 	ent:CallOnRemove( "remove_projected_textures", function( vehicle )
-		for i, proj in pairs( ent.Projtexts ) do
+		for i, proj in ipairs( ent.Projtexts ) do
 			local thelamp = proj.projector
 			if IsValid(thelamp) then
 				thelamp:Remove()
@@ -381,7 +381,7 @@ local function SetUpLights( vname , ent )
 	end
 	
 	if istable( vehiclelist.Headlight_sprites ) then
-		for _, data in pairs( vehiclelist.Headlight_sprites ) do
+		for _, data in ipairs( vehiclelist.Headlight_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 1
@@ -392,13 +392,13 @@ local function SetUpLights( vname , ent )
 				s.size = data.size and data.size or 16
 				s.pos = data.pos
 				if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			else
 				s.pos = data
 				s.color = Color( hl_col[1], hl_col[2], hl_col[3],  255)
 				s.material = mat
 				s.size = 16
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 				
 				local s2 = {}
 				s2.PixVis = util.GetPixelVisibleHandle()
@@ -407,13 +407,13 @@ local function SetUpLights( vname , ent )
 				s2.color = Color( hl_col[1], hl_col[2], hl_col[3],  150)
 				s2.material = mat2
 				s2.size = 64
-				table.insert(ent.Sprites, s2)
+				ent.Sprites[_] = s2
 			end
 		end
 	end
 	
 	if istable( vehiclelist.Rearlight_sprites ) then
-		for _, data in pairs( vehiclelist.Rearlight_sprites ) do
+		for _, data in ipairs( vehiclelist.Rearlight_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 1
@@ -424,7 +424,7 @@ local function SetUpLights( vname , ent )
 				s.size = data.size and data.size or 16
 				s.pos = data.pos
 				if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			else
 				local s2 = {}
 				s2.PixVis = util.GetPixelVisibleHandle()
@@ -433,19 +433,19 @@ local function SetUpLights( vname , ent )
 				s2.color = Color( 255, 120, 0,  125 )
 				s2.material = mat2
 				s2.size = 12
-				table.insert(ent.Sprites, s2)
+				ent.Sprites[_] = s2
 				
 				s.pos = data
 				s.color = Color( 255, 0, 0,  90 )
 				s.material = mat
 				s.size = 32
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			end
 		end
 	end
 	
 	if istable( vehiclelist.Brakelight_sprites ) then
-		for _, data in pairs( vehiclelist.Brakelight_sprites ) do
+		for _, data in ipairs( vehiclelist.Brakelight_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 4
@@ -456,13 +456,13 @@ local function SetUpLights( vname , ent )
 				s.size = data.size and data.size or 16
 				s.pos = data.pos
 				if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			else
 				s.pos = data
 				s.color = Color( 255, 0, 0,  90 )
 				s.material = mat
 				s.size = 32
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 				
 				local s2 = {}
 				s2.PixVis = util.GetPixelVisibleHandle()
@@ -471,13 +471,13 @@ local function SetUpLights( vname , ent )
 				s2.color = Color( 255, 120, 0,  125 ) 
 				s2.material = mat2
 				s2.size = 12
-				table.insert(ent.Sprites, s2)
+				ent.Sprites[_] = s2
 			end
 		end
 	end
 	
 	if istable( vehiclelist.Reverselight_sprites ) then
-		for _, data in pairs( vehiclelist.Reverselight_sprites ) do
+		for _, data in ipairs( vehiclelist.Reverselight_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 5
@@ -488,13 +488,13 @@ local function SetUpLights( vname , ent )
 				s.size = data.size and data.size or 16
 				s.pos = data.pos
 				if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			else
 				s.pos = data
 				s.color = Color( 255, 255, 255,  150)
 				s.material = mat
 				s.size = 12
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 				
 				local s2 = {}
 				s2.PixVis = util.GetPixelVisibleHandle()
@@ -503,13 +503,13 @@ local function SetUpLights( vname , ent )
 				s2.color =  Color( 255, 255, 255,  80 )
 				s2.material = mat2
 				s2.size = 25
-				table.insert(ent.Sprites, s2)
+				ent.Sprites[_] = s2
 			end
 		end
 	end
 	
 	if istable( vehiclelist.FrontMarker_sprites ) then
-		for _, data in pairs( vehiclelist.FrontMarker_sprites ) do
+		for _, data in ipairs( vehiclelist.FrontMarker_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 1
@@ -519,13 +519,13 @@ local function SetUpLights( vname , ent )
 				s.color = Color( 200, 100, 0,  150)
 				s.material = mat
 				s.size = 12
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			end
 		end
 	end
 	
 	if istable( vehiclelist.RearMarker_sprites ) then
-		for _, data in pairs( vehiclelist.RearMarker_sprites ) do
+		for _, data in ipairs( vehiclelist.RearMarker_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 1
@@ -535,13 +535,13 @@ local function SetUpLights( vname , ent )
 				s.color = Color( 205, 0, 0,  150 )
 				s.material = mat
 				s.size = 12
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			end
 		end
 	end
 	
 	if istable( vehiclelist.Headlamp_sprites ) then
-		for _, data in pairs( vehiclelist.Headlamp_sprites ) do
+		for _, data in ipairs( vehiclelist.Headlamp_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 2
@@ -552,13 +552,13 @@ local function SetUpLights( vname , ent )
 				s.size = data.size and data.size or 16
 				s.pos = data.pos
 				if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			else
 				s.pos = data
 				s.color = Color( hl_col[1], hl_col[2], hl_col[3],  255)
 				s.material = mat
 				s.size = 16
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 				
 				local s2 = {}
 				s2.PixVis = util.GetPixelVisibleHandle()
@@ -567,13 +567,13 @@ local function SetUpLights( vname , ent )
 				s2.color = Color( hl_col[1], hl_col[2], hl_col[3],  150)
 				s2.material = mat2
 				s2.size = 64
-				table.insert(ent.Sprites, s2)
+				ent.Sprites[_] = s2
 			end
 		end
 	end
 	
 	if istable( vehiclelist.FogLight_sprites ) then
-		for _, data in pairs( vehiclelist.FogLight_sprites ) do
+		for _, data in ipairs( vehiclelist.FogLight_sprites ) do
 			local s = {}
 			s.PixVis = util.GetPixelVisibleHandle()
 			s.trigger = 3
@@ -584,13 +584,13 @@ local function SetUpLights( vname , ent )
 				s.size = data.size and data.size or 32
 				s.pos = data.pos
 				if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			else
 				s.pos = data
 				s.color = Color( hl_col[1], hl_col[2], hl_col[3],  200)
 				s.material = mat2
 				s.size = 32
-				table.insert(ent.Sprites, s)
+				ent.Sprites[_] = s
 			end
 		end
 	end
@@ -599,7 +599,7 @@ local function SetUpLights( vname , ent )
 		ent.HasTurnSignals = true 
 		
 		if istable( vehiclelist.Turnsignal_sprites.Left ) then
-			for _, data in pairs( vehiclelist.Turnsignal_sprites.Left ) do
+			for _, data in ipairs( vehiclelist.Turnsignal_sprites.Left ) do
 				local s = {}
 				s.PixVis = util.GetPixelVisibleHandle()
 				s.trigger = 6
@@ -610,13 +610,13 @@ local function SetUpLights( vname , ent )
 					s.size = data.size and data.size or 24
 					s.pos = data.pos
 					if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 				else
 					s.pos = data
 					s.color = Color( 255, 150, 0,  150)
 					s.material = mat
 					s.size = 20
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 					
 					local s2 = {}
 					s2.PixVis = util.GetPixelVisibleHandle()
@@ -625,13 +625,13 @@ local function SetUpLights( vname , ent )
 					s2.color = Color( 200, 100, 0,  80)
 					s2.material = mat2
 					s2.size = 70
-					table.insert(ent.Sprites, s2)
+					ent.Sprites[_] = s2
 				end
 			end
 		end
 		
 		if istable( vehiclelist.Turnsignal_sprites.Right ) then
-			for _, data in pairs( vehiclelist.Turnsignal_sprites.Right ) do
+			for _, data in ipairs( vehiclelist.Turnsignal_sprites.Right ) do
 				local s = {}
 				s.PixVis = util.GetPixelVisibleHandle()
 				s.trigger = 7
@@ -642,13 +642,13 @@ local function SetUpLights( vname , ent )
 					s.size = data.size and data.size or 24
 					s.pos = data.pos
 					if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 				else
 					s.pos = data
 					s.color = Color( 255, 150, 0,  150)
 					s.material = mat
 					s.size = 20
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 					
 					local s2 = {}
 					s2.PixVis = util.GetPixelVisibleHandle()
@@ -657,14 +657,14 @@ local function SetUpLights( vname , ent )
 					s2.color = Color( 200, 100, 0,  80)
 					s2.material = mat2
 					s2.size = 70
-					table.insert(ent.Sprites, s2)
+					ent.Sprites[_] = s2
 				end
 			end
 		end
 		
 		if istable( vehiclelist.Turnsignal_sprites.TurnBrakeLeft ) then
 			ent.HasSpecialTurnSignals = true 
-			for _, data in pairs( vehiclelist.Turnsignal_sprites.TurnBrakeLeft ) do
+			for _, data in ipairs( vehiclelist.Turnsignal_sprites.TurnBrakeLeft ) do
 				local s = {}
 				s.PixVis = util.GetPixelVisibleHandle()
 				s.trigger = 8
@@ -675,13 +675,13 @@ local function SetUpLights( vname , ent )
 					s.size = data.size and data.size or 16
 					s.pos = data.pos
 					if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 				else
 					s.pos = data
 					s.color = Color( 255, 60, 0,  90 )
 					s.material = mat
 					s.size = 40
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 					
 					local s2 = {}
 					s2.PixVis = util.GetPixelVisibleHandle()
@@ -690,14 +690,14 @@ local function SetUpLights( vname , ent )
 					s2.color = Color( 255, 120, 0,  125 ) 
 					s2.material = mat2
 					s2.size = 16
-					table.insert(ent.Sprites, s2)
+					ent.Sprites[_] = s2
 				end
 			end
 		end
 		
 		if istable( vehiclelist.Turnsignal_sprites.TurnBrakeRight ) then
 			ent.HasSpecialTurnSignals = true 
-			for _, data in pairs( vehiclelist.Turnsignal_sprites.TurnBrakeRight ) do
+			for _, data in ipairs( vehiclelist.Turnsignal_sprites.TurnBrakeRight ) do
 				local s = {}
 				s.PixVis = util.GetPixelVisibleHandle()
 				s.trigger = 9
@@ -708,13 +708,13 @@ local function SetUpLights( vname , ent )
 					s.size = data.size and data.size or 16
 					s.pos = data.pos
 					if (data.OnBodyGroups) then s.bodygroups = data.OnBodyGroups end
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 				else
 					s.pos = data
 					s.color = Color( 255, 60, 0,  90 )
 					s.material = mat
 					s.size = 40
-					table.insert(ent.Sprites, s)
+					ent.Sprites[_] = s
 					
 					local s2 = {}
 					s2.PixVis = util.GetPixelVisibleHandle()
@@ -723,7 +723,7 @@ local function SetUpLights( vname , ent )
 					s2.color = Color( 255, 120, 0,  125 ) 
 					s2.material = mat2
 					s2.size = 16
-					table.insert(ent.Sprites, s2)
+					ent.Sprites[_] = s2
 				end
 			end
 		end
@@ -788,7 +788,7 @@ hook.Add( "Think", "simfphys_lights_managment", function()
 	if NextCheck < curtime then
 		NextCheck = curtime + checkinterval
 		
-		for i, ent in pairs( ents.FindByClass( "gmod_sent_vehicle_fphysics_base" ) ) do
+		for i, ent in ipairs( ents.FindByClass( "gmod_sent_vehicle_fphysics_base" ) ) do
 			if ent.EnableLights ~= true then
 				local listname = ent:GetLights_List()
 				
@@ -806,7 +806,7 @@ end )
 
 hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function()
 	if vtable then
-		for i, ent in pairs( vtable ) do
+		for i, ent in ipairs( vtable ) do
 			if IsValid( ent ) then
 				if ent:GetEMSEnabled() then
 					DrawEMSLights( ent )
@@ -815,7 +815,7 @@ hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function()
 				if SpritesDisabled then return end
 				if not istable( ent.triggers ) then return end
 				
-				for _, sprite in pairs( ent.Sprites ) do
+				for _, sprite in ipairs( ent.Sprites ) do
 					
 					if not sprite.Damaged then
 						local regTrigger = ent.triggers[ sprite.trigger ]
@@ -867,7 +867,7 @@ local function spritedamage( length )
 	
 	if istable( veh.Sprites ) then
 		
-		for i, sprite in pairs( veh.Sprites ) do
+		for i, sprite in ipairs( veh.Sprites ) do
 			
 			if not sprite.Damaged then
 				
@@ -896,7 +896,7 @@ local function spritedamage( length )
 	
 	if istable( veh.Projtexts ) then
 		
-		for i, proj in pairs( veh.Projtexts ) do
+		for i, proj in ipairs( veh.Projtexts ) do
 			
 			if not proj.Damaged then 
 				
@@ -945,13 +945,13 @@ local function spriterepair( length )
 	veh.turnsignals_damaged = nil
 	
 	if istable( veh.Sprites ) then
-		for i, sprite in pairs( veh.Sprites ) do
+		for i, sprite in ipairs( veh.Sprites ) do
 			veh.Sprites[i].Damaged = false
 		end
 	end
 	
 	if istable( veh.Projtexts ) then
-		for i, proj in pairs( veh.Projtexts ) do
+		for i, proj in ipairs( veh.Projtexts ) do
 			veh.Projtexts[i].Damaged = false
 		end
 	end
