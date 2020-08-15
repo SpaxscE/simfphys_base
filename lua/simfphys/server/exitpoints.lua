@@ -129,7 +129,7 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 	
 	if IsDriverSeat then
 		if LinkedDoorAnims then
-			for i,_ in pairs( b_ent.ModelInfo.LinkDoorAnims ) do
+			for i,_ in ipairs( b_ent.ModelInfo.LinkDoorAnims ) do
 				local seq_att = b_ent.ModelInfo.LinkDoorAnims[ i ].exit
 				local attachmentdata = b_ent:GetAttachment( b_ent:LookupAttachment( i ) )
 				
