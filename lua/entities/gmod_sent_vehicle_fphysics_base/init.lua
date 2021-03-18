@@ -1007,17 +1007,19 @@ function ENT:SetPassenger( ply )
 	
 	if not IsValid(self:GetDriver()) and not ply:KeyDown(IN_WALK) then
 		ply:SetAllowWeaponsInVehicle( false ) 
+		
 		if IsValid(self.DriverSeat) then
-			
 			self:EnteringSequence( ply )
-			ply:EnterVehicle( self.DriverSeat )
-			
-			timer.Simple( 0.01, function()
-				if IsValid(ply) then
-					local angles = Angle(0,90,0)
-					ply:SetEyeAngles( angles )
-				end
-			end)
+
+			local allowed = ply:EnterVehicle( self.DriverSeat )
+			if allowed then
+				timer.Simple( 0.01, function()
+					if IsValid(ply) then
+						local angles = Angle(0,90,0)
+						ply:SetEyeAngles( angles )
+					end
+				end)
+			end
 		end
 	else
 		if self.PassengerSeats then
