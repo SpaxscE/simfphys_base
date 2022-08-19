@@ -386,21 +386,11 @@ function ENT:GetPassengerSeats()
 end
 
 function ENT:GetSeatIndex(ply)
-    if self:GetDriver() == ply then
-        print("seat index : 1")
-
-        return 1
+    for i = 1, table.Count(self.PassengerSeats) do
+        if self.pSeat[i] == ply:GetVehicle() then return i + 1 end
     end
 
-    local DriverSeat = self:GetDriverSeat()
-
-    for i, v in pairs(self:GetChildren()) do
-        if v ~= DriverSeat and v:GetClass():lower() == "prop_vehicle_prisoner_pod" and v:GetDriver() == ply then
-            print("seat index : " .. tostring(i + 1))
-
-            return i + 1
-        end
-    end
+    return 1
 end
 
 function ENT:GetVehicleClass()

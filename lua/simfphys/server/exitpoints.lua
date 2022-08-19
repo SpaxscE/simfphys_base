@@ -68,16 +68,16 @@ local function ExitUsingMyTraces(ent, ply, b_ent)
             filter = Filter1
         })
 
-        local traceto = util.TraceLine({
+        traceto = util.TraceLine({
             start = Center,
             endpos = check0,
             filter = Filter2
         })
 
-        local HitWall = tr.Hit or traceto.hit
+        HitWall = tr.Hit or traceto.hit
         local check1 = (HitWall == true or HitGround == false or util.IsInWorld(check0) == false) and (pos + ent:GetUp() * 100) or check0
 
-        local tr = util.TraceHull({
+        tr = util.TraceHull({
             start = check1,
             endpos = check1 + Vector(0, 0, 80),
             maxs = HullSize,
@@ -85,16 +85,16 @@ local function ExitUsingMyTraces(ent, ply, b_ent)
             filter = Filter1
         })
 
-        local traceto = util.TraceLine({
+        traceto = util.TraceLine({
             start = Center,
             endpos = check1,
             filter = Filter2
         })
 
-        local HitWall = tr.Hit or traceto.hit
+        HitWall = tr.Hit or traceto.hit
         local check2 = (HitWall == true or util.IsInWorld(check1) == false) and (pos - ent:GetUp() * 100) or check1
 
-        local tr = util.TraceHull({
+        tr = util.TraceHull({
             start = check2,
             endpos = check2 + Vector(0, 0, 80),
             maxs = HullSize,
@@ -102,16 +102,16 @@ local function ExitUsingMyTraces(ent, ply, b_ent)
             filter = Filter1
         })
 
-        local traceto = util.TraceLine({
+        traceto = util.TraceLine({
             start = Center,
             endpos = check2,
             filter = Filter2
         })
 
-        local HitWall = tr.Hit or traceto.hit
+        HitWall = tr.Hit or traceto.hit
         local check3 = (HitWall == true or util.IsInWorld(check2) == false) and b_ent:LocalToWorld(Vector(0, radius, 0)) or check2
 
-        local tr = util.TraceHull({
+        tr = util.TraceHull({
             start = check3,
             endpos = check3 + Vector(0, 0, 80),
             maxs = HullSize,
@@ -119,16 +119,16 @@ local function ExitUsingMyTraces(ent, ply, b_ent)
             filter = Filter1
         })
 
-        local traceto = util.TraceLine({
+        traceto = util.TraceLine({
             start = Center,
             endpos = check3,
             filter = Filter2
         })
 
-        local HitWall = tr.Hit or traceto.hit
+        HitWall = tr.Hit or traceto.hit
         local check4 = (HitWall == true or util.IsInWorld(check3) == false) and b_ent:LocalToWorld(Vector(0, -radius, 0)) or check3
 
-        local tr = util.TraceHull({
+        tr = util.TraceHull({
             start = check4,
             endpos = check4 + Vector(0, 0, 80),
             maxs = HullSize,
@@ -136,13 +136,13 @@ local function ExitUsingMyTraces(ent, ply, b_ent)
             filter = Filter1
         })
 
-        local traceto = util.TraceLine({
+        traceto = util.TraceLine({
             start = Center,
             endpos = check4,
             filter = Filter2
         })
 
-        local HitWall = tr.Hit or traceto.hit
+        HitWall = tr.Hit or traceto.hit
         local exitpoint = (HitWall == true or util.IsInWorld(check4) == false) and b_ent:LocalToWorld(Vector(0, 0, 0)) or check4
 
         if util.IsInWorld(exitpoint) then
@@ -163,68 +163,64 @@ local function ExitUsingAttachments(ent, ply, b_ent)
         table.insert(Filter, b_ent.Wheels[i])
     end
 
-    local IsDriverSeat = ent == b_ent:GetDriverSeat()
+    if LinkedDoorAnims then
+        for i, _ in pairs(b_ent.ModelInfo.LinkDoorAnims) do
+            local seq_att = b_ent.ModelInfo.LinkDoorAnims[i].exit
+            local attachmentdata = b_ent:GetAttachment(b_ent:LookupAttachment(i))
 
-    if IsDriverSeat then
-        if LinkedDoorAnims then
-            for i, _ in pairs(b_ent.ModelInfo.LinkDoorAnims) do
-                local seq_att = b_ent.ModelInfo.LinkDoorAnims[i].exit
-                local attachmentdata = b_ent:GetAttachment(b_ent:LookupAttachment(i))
+            if attachmentdata then
+                local targetpos = attachmentdata.Pos
+                local targetang = attachmentdata.Ang
+                targetang.r = 0
 
-                if attachmentdata then
-                    local targetpos = attachmentdata.Pos
-                    local targetang = attachmentdata.Ang
-                    targetang.r = 0
+                local tr = util.TraceLine({
+                    start = Center,
+                    endpos = targetpos,
+                    filter = Filter
+                })
 
-                    local tr = util.TraceLine({
-                        start = Center,
-                        endpos = targetpos,
-                        filter = Filter
-                    })
+                local Hit = tr.Hit
+                local InWorld = util.IsInWorld(targetpos)
+                local IsBlocked = Hit or not InWorld
 
-                    local Hit = tr.Hit
-                    local InWorld = util.IsInWorld(targetpos)
-                    local IsBlocked = Hit or not InWorld
+                if not IsBlocked then
+                    ply:SetPos(targetpos)
+                    ply:SetEyeAngles(targetang)
+                    b_ent:PlayAnimation(seq_att)
+                    b_ent:ForceLightsOff()
 
-                    if not IsBlocked then
-                        ply:SetPos(targetpos)
-                        ply:SetEyeAngles(targetang)
-                        b_ent:PlayAnimation(seq_att)
-                        b_ent:ForceLightsOff()
-
-                        return
-                    end
+                    return
                 end
             end
-        else
-            local seq_att = b_ent.Exitpoints[b_ent:GetSeatIndex(ply)]
+        end
+    else
+        local seq_att = b_ent.Exitpoints[b_ent:GetSeatIndex(ply)]
 
-            if seq_att then
-                local attachmentdata = b_ent:GetAttachment(b_ent:LookupAttachment(seq_att))
+        if seq_att then
+            local attachmentdata = b_ent:GetAttachment(b_ent:LookupAttachment(seq_att))
 
-                if attachmentdata then
-                    local targetpos = attachmentdata.Pos
-                    local targetang = attachmentdata.Ang
-                    targetang.r = 0
+            if attachmentdata then
+                local targetpos = attachmentdata.Pos
+                local targetang = attachmentdata.Ang
+                targetang.r = 0
 
-                    local tr = util.TraceLine({
-                        start = Center,
-                        endpos = targetpos,
-                        filter = Filter
-                    })
+                local tr = util.TraceLine({
+                    start = Center,
+                    endpos = targetpos,
+                    filter = Filter
+                })
 
-                    local Hit = tr.Hit
-                    local InWorld = util.IsInWorld(targetpos)
-                    local IsBlocked = Hit or not InWorld
+                local Hit = tr.Hit
+                local InWorld = util.IsInWorld(targetpos)
+                local IsBlocked = Hit or not InWorld
 
-                    if not IsBlocked then
-                        ply:SetPos(targetpos)
-                        ply:SetEyeAngles(targetang)
-                        b_ent:PlayAnimation(seq_att)
-                        b_ent:ForceLightsOff()
+                if not IsBlocked then
+                    ply:SetPos(targetpos)
+                    ply:SetEyeAngles(targetang)
+                    b_ent:PlayAnimation(seq_att)
+                    b_ent:ForceLightsOff()
 
-                        return
-                    end
+                    return
                 end
             end
         end
@@ -247,7 +243,6 @@ end
 
 local function HandleVehicleExit(ply, vehicle)
     if not IsValid(ply) then return end
-    local vehicle = ply:GetVehicle()
     if not IsValid(vehicle) then return end
 
     if vehicle.fphysSeat then

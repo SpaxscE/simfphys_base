@@ -34,7 +34,7 @@ function ENT:Think()
 	
 	self:SetPoseParameters( curtime )
 	
-	self:NextThink( curtime )
+	self:SetNextClientThink( curtime )
 	
 	return true
 end
