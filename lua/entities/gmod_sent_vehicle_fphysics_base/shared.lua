@@ -169,6 +169,22 @@ function ENT:GetPassengerSeats()
 	return self.pSeat
 end
 
+function ENT:GetSeatIndex(ply)
+	if self:GetDriver() == ply then
+		print("seat index : 1")
+		return 1
+	end
+		
+	local DriverSeat = self:GetDriverSeat()
+
+	for i, v in pairs( self:GetChildren() ) do
+		if v ~= DriverSeat and v:GetClass():lower() == "prop_vehicle_prisoner_pod" and v:GetDriver() == ply then
+			print("seat index : " .. tostring(i + 1))
+			return i + 1
+		end
+	end
+end
+
 function ENT:GetVehicleClass()
 	return "these are not the droids you are looking for"
 end

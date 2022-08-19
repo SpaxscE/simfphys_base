@@ -158,8 +158,8 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 				end
 			end
 		else
-			for i = 1, table.Count( b_ent.Exitpoints ) do
-				local seq_att = b_ent.Exitpoints[i]
+			local seq_att = b_ent.Exitpoints[b_ent:GetSeatIndex(ply)]
+			if seq_att then
 				local attachmentdata = b_ent:GetAttachment( b_ent:LookupAttachment( seq_att ) )
 				if attachmentdata then
 					local targetpos = attachmentdata.Pos
@@ -174,7 +174,7 @@ local function ExitUsingAttachments( ent, ply, b_ent )
 					local Hit = tr.Hit
 					local InWorld = util.IsInWorld( targetpos )
 					local IsBlocked = Hit or not InWorld
-					
+
 					if not IsBlocked then
 						ply:SetPos( targetpos )
 						ply:SetEyeAngles( targetang )
