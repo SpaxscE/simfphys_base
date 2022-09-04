@@ -68,7 +68,7 @@ local V = {
 
 list.Set("simfphys_vehicles", "sim_fphys_jeep", V)
 
-local V = {
+V = {
     Name = "HL2 Combine APC",
     Model = "models/combine_apc.mdl",
     Class = "gmod_sent_vehicle_fphysics_base",
@@ -125,7 +125,7 @@ local V = {
 
 list.Set("simfphys_vehicles", "sim_fphys_combineapc", V)
 
-local V = {
+V = {
     Name = "HL2:EP2 Jalopy",
     Model = "models/vehicle.mdl",
     Class = "gmod_sent_vehicle_fphysics_base",
@@ -211,7 +211,7 @@ if (file.Exists("models/vehicle.mdl", "GAME")) then
     list.Set("simfphys_vehicles", "sim_fphys_jalopy", V)
 end
 
-local V = {
+V = {
     Name = "Driveable Couch",
     Model = "models/props_c17/FurnitureCouch002a.mdl",
     Class = "gmod_sent_vehicle_fphysics_base",
@@ -285,7 +285,7 @@ local V = {
 
 list.Set("simfphys_vehicles", "sim_fphys_couch", V)
 
-local V = {
+V = {
     Name = "HL2 APC",
     Model = "models/props_vehicles/apc001.mdl",
     Class = "gmod_sent_vehicle_fphysics_base",

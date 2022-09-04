@@ -287,9 +287,7 @@ if SERVER then
     end
 
     function simfphys.SpawnVehicle(Player, Pos, Ang, Model, Class, VName, VTable, bNoOwner)
-        if not bNoOwner then
-            if not gamemode.Call("PlayerSpawnVehicle", Player, Model, VName, VTable) then return end
-        end
+        if not bNoOwner and not gamemode.Call("PlayerSpawnVehicle", Player, Model, VName, VTable) then return end
 
         if not file.Exists(Model, "GAME") then
             Player:PrintMessage(HUD_PRINTTALK, "ERROR: \"" .. Model .. "\" does not exist! (Class: " .. VName .. ")")

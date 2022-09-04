@@ -544,12 +544,10 @@ local function PaintSeatSwitcher(ent, pSeats, SeatCount)
                 draw.RoundedBox(5, X + Offset - HiderOffset, yPos + I * 30, 35 + HiderOffset, 25, Color(0, 0, 0, 100 + 50 * smHider))
             end
 
-            if I == SeatCount then
-                if ent:GetIsVehicleLocked() then
-                    surface.SetDrawColor(255, 255, 255, 255)
-                    surface.SetMaterial(LockText)
-                    surface.DrawTexturedRect(X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25)
-                end
+            if I == SeatCount and ent:GetIsVehicleLocked() then
+                surface.SetDrawColor(255, 255, 255, 255)
+                surface.SetMaterial(LockText)
+                surface.DrawTexturedRect(X + Offset - HiderOffset - 25, yPos + I * 30, 25, 25)
             end
 
             if Hide then

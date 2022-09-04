@@ -15,7 +15,7 @@ local light_table = {
 
 list.Set("simfphys_lights", "conapc", light_table)
 
-local light_table = {
+light_table = {
     L_HeadLampPos = Vector(32.7, 79.5, 29.0),
     L_HeadLampAng = Angle(15, 90, 0),
     R_HeadLampPos = Vector(-30.75, 79.5, 28.9),
@@ -99,7 +99,7 @@ local light_table = {
 
 list.Set("simfphys_lights", "jalopy", light_table)
 
-local light_table = {
+light_table = {
     L_HeadLampPos = Vector(-11, 55, 35),
     L_HeadLampAng = Angle(20, 90, 0),
     R_HeadLampPos = Vector(11, 55, 35),
