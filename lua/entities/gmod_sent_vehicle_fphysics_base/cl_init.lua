@@ -16,6 +16,7 @@ function ENT:Initialize()
 end
 
 function ENT:Think()
+	local selfTable = self:GetTable()
 	local curtime = CurTime()
 	
 	local Active = self:GetActive()
@@ -24,12 +25,12 @@ function ENT:Think()
 	
 	self:ManageSounds( Active, Throttle, LimitRPM )
 
-	self.RunNext = self.RunNext or 0
-	if self.RunNext < curtime then
+	selfTable.RunNext = selfTable.RunNext or 0
+	if selfTable.RunNext < curtime then
 		self:ManageEffects( Active, Throttle, LimitRPM )
 		self:CalcFlasher()
 		
-		self.RunNext = curtime + 0.06
+		selfTable.RunNext = curtime + 0.06
 	end
 	
 	self:SetPoseParameters( curtime )
@@ -73,28 +74,29 @@ function ENT:GetFlasher()
 end
 
 function ENT:SetPoseParameters( curtime )
-	self.sm_vSteer = self.sm_vSteer and self.sm_vSteer + (self:GetVehicleSteer() - self.sm_vSteer) * 0.3 or 0
-	self:SetPoseParameter("vehicle_steer", self.sm_vSteer  )
+	local selfTable = self:GetTable()
+	selfTable.sm_vSteer = selfTable.sm_vSteer and selfTable.sm_vSteer + (self:GetVehicleSteer() - selfTable.sm_vSteer) * 0.3 or 0
+	self:SetPoseParameter("vehicle_steer", selfTable.sm_vSteer  )
 	
-	if not istable( self.pp_data ) then
-		self.ppNextCheck = self.ppNextCheck or curtime + 0.5
-		if self.ppNextCheck < curtime then
-			self.ppNextCheck = curtime + 0.5
+	if not istable( selfTable.pp_data ) then
+		selfTable.ppNextCheck = selfTable.ppNextCheck or curtime + 0.5
+		if selfTable.ppNextCheck < curtime then
+			selfTable.ppNextCheck = curtime + 0.5
 			
 			-- net.Start("simfphys_request_ppdata",true)
 			-- 	net.WriteEntity( self )
 			-- net.SendToServer()
 		end
 	else
-		if not self.CustomWheels then
-			for i = 1, table.Count( self.pp_data ) do
-				local Wheel = self.pp_data[i].entity
+		if not selfTable.CustomWheels then
+			for i = 1, table.Count( selfTable.pp_data ) do
+				local Wheel = selfTable.pp_data[i].entity
 				
 				if IsValid( Wheel ) then
-					local addPos = Wheel:GetDamaged() and self.pp_data[i].dradius or 0
+					local addPos = Wheel:GetDamaged() and selfTable.pp_data[i].dradius or 0
 					
-					local Pose = (self.pp_data[i].pos - self:WorldToLocal( Wheel:GetPos()).z + addPos ) / self.pp_data[i].travel
-					self:SetPoseParameter( self.pp_data[i].name, Pose ) 
+					local Pose = (selfTable.pp_data[i].pos - self:WorldToLocal( Wheel:GetPos()).z + addPos ) / selfTable.pp_data[i].travel
+					self:SetPoseParameter( selfTable.pp_data[i].name, Pose ) 
 				end
 			end
 		end
@@ -212,6 +214,7 @@ function ENT:ManageEffects( Active, fThrottle, LimitRPM )
 end
 
 function ENT:ManageSounds( Active, fThrottle, LimitRPM )
+	local selfTable = self:GetTable()
 	local FlyWheelRPM = self:GetFlyWheelRPM()
 	local Active = Active and (FlyWheelRPM ~= 0)
 	local IdleRPM = self:GetIdleRPM()
@@ -227,77 +230,77 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 	local FT = FrameTime()
 	local Rate = 3.33 * FT
 	
-	self.FadeThrottle = self.FadeThrottle + math.Clamp(Throttle - self.FadeThrottle,-Rate,Rate)
-	self.PitchOffset = self.PitchOffset + ((CurDist - self.OldDist) * 0.23 - self.PitchOffset) * 0.5
-	self.OldDist = CurDist
-	self.SmoothRPM = self.SmoothRPM + math.Clamp(FlyWheelRPM - self.SmoothRPM,-0.972 * FT * LimitRPM,1.66 * FT * LimitRPM)
+	selfTable.FadeThrottle = selfTable.FadeThrottle + math.Clamp(Throttle - selfTable.FadeThrottle,-Rate,Rate)
+	selfTable.PitchOffset = selfTable.PitchOffset + ((CurDist - selfTable.OldDist) * 0.23 - selfTable.PitchOffset) * 0.5
+	selfTable.OldDist = CurDist
+	selfTable.SmoothRPM = selfTable.SmoothRPM + math.Clamp(FlyWheelRPM - selfTable.SmoothRPM,-0.972 * FT * LimitRPM,1.66 * FT * LimitRPM)
 	
-	self.OldThrottle2 = self.OldThrottle2 or 0
-	if Throttle ~= self.OldThrottle2 then
-		self.OldThrottle2 = Throttle
+	selfTable.OldThrottle2 = selfTable.OldThrottle2 or 0
+	if Throttle ~= selfTable.OldThrottle2 then
+		selfTable.OldThrottle2 = Throttle
 		if Throttle == 0 then
-			if self.SmoothRPM > LimitRPM * 0.6 then
+			if selfTable.SmoothRPM > LimitRPM * 0.6 then
 				self:Backfire()
 			end
 		end
 	end
 	
 	if self:GetRevlimiter() and LimitRPM > 2500 then
-		if (self.SmoothRPM >= LimitRPM - 200) and self.FadeThrottle > 0 then
-			self.SmoothRPM = self.SmoothRPM - 0.2 * LimitRPM
-			self.FadeThrottle = 0.2
+		if (selfTable.SmoothRPM >= LimitRPM - 200) and selfTable.FadeThrottle > 0 then
+			selfTable.SmoothRPM = selfTable.SmoothRPM - 0.2 * LimitRPM
+			selfTable.FadeThrottle = 0.2
 			self:Backfire()
 		end
 	end
 	
-	if Active ~= self.OldActive then
+	if Active ~= selfTable.OldActive then
 		local preset = self:GetEngineSoundPreset()
 		local UseGearResetter = self:SetSoundPreset( preset )
 		
-		self.SoundMode = UseGearResetter and 2 or 1
+		selfTable.SoundMode = UseGearResetter and 2 or 1
 		
-		self.OldActive = Active
+		selfTable.OldActive = Active
 		
 		if Active then
 			local MaxHealth = self:GetMaxHealth()
 			local Health = self:GetCurHealth()
 			
 			if Health <= (MaxHealth * 0.6) then
-				self.DamageSnd:PlayEx(0,0)
+				selfTable.DamageSnd:PlayEx(0,0)
 			end
 			
-			if self.SoundMode == 2 then
-				self.HighRPM = CreateSound(self, self.EngineSounds[ "HighRPM" ] )
-				self.LowRPM = CreateSound(self, self.EngineSounds[ "LowRPM" ])
-				self.Idle = CreateSound(self, self.EngineSounds[ "Idle" ])
+			if selfTable.SoundMode == 2 then
+				selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "HighRPM" ] )
+				selfTable.LowRPM = CreateSound(self, selfTable.EngineSounds[ "LowRPM" ])
+				selfTable.Idle = CreateSound(self, selfTable.EngineSounds[ "Idle" ])
 				
-				self.HighRPM:PlayEx(0,0)
-				self.LowRPM:PlayEx(0,0)
-				self.Idle:PlayEx(0,0)
+				selfTable.HighRPM:PlayEx(0,0)
+				selfTable.LowRPM:PlayEx(0,0)
+				selfTable.Idle:PlayEx(0,0)
 			else
-				local IdleSound = self.EngineSounds[ "IdleSound" ]
-				local LowSound = self.EngineSounds[ "LowSound" ]
-				local HighSound = self.EngineSounds[ "HighSound" ]
-				local ThrottleSound = self.EngineSounds[ "ThrottleSound" ]
+				local IdleSound = selfTable.EngineSounds[ "IdleSound" ]
+				local LowSound = selfTable.EngineSounds[ "LowSound" ]
+				local HighSound = selfTable.EngineSounds[ "HighSound" ]
+				local ThrottleSound = selfTable.EngineSounds[ "ThrottleSound" ]
 				
 				if IdleSound then
-					self.Idle = CreateSound(self, IdleSound)
-					self.Idle:PlayEx(0,0)
+					selfTable.Idle = CreateSound(self, IdleSound)
+					selfTable.Idle:PlayEx(0,0)
 				end
 				
 				if LowSound then
-					self.LowRPM = CreateSound(self, LowSound)
-					self.LowRPM:PlayEx(0,0)
+					selfTable.LowRPM = CreateSound(self, LowSound)
+					selfTable.LowRPM:PlayEx(0,0)
 				end
 				
 				if HighSound then
-					self.HighRPM = CreateSound(self, HighSound)
-					self.HighRPM:PlayEx(0,0)
+					selfTable.HighRPM = CreateSound(self, HighSound)
+					selfTable.HighRPM:PlayEx(0,0)
 				end
 				
 				if ThrottleSound then
-					self.Valves = CreateSound(self, ThrottleSound)
-					self.Valves:PlayEx(0,0)
+					selfTable.Valves = CreateSound(self, ThrottleSound)
+					selfTable.Valves:PlayEx(0,0)
 				end
 			end
 		else
@@ -306,42 +309,42 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 	end
 	
 	if Active then		
-		local Volume = 0.25 + 0.25 * ((self.SmoothRPM / LimitRPM) ^ 1.5) + self.FadeThrottle * 0.5
-		local Pitch = math.Clamp( (20 + self.SmoothRPM / 50 - self.PitchOffset) * self.PitchMulAll,0,255)
+		local Volume = 0.25 + 0.25 * ((selfTable.SmoothRPM / LimitRPM) ^ 1.5) + selfTable.FadeThrottle * 0.5
+		local Pitch = math.Clamp( (20 + selfTable.SmoothRPM / 50 - selfTable.PitchOffset) * selfTable.PitchMulAll,0,255)
 		
-		if self.DamageSnd then
-			self.DamageSnd:ChangeVolume( (self.SmoothRPM / LimitRPM) * 0.6 ^ 1.5 )
-			self.DamageSnd:ChangePitch( 100 ) 
+		if selfTable.DamageSnd then
+			selfTable.DamageSnd:ChangeVolume( (selfTable.SmoothRPM / LimitRPM) * 0.6 ^ 1.5 )
+			selfTable.DamageSnd:ChangePitch( 100 ) 
 		end
 		
-		if self.SoundMode == 2 then
-			if self.FadeThrottle ~= self.OldThrottle then
-				self.OldThrottle = self.FadeThrottle
-				if self.FadeThrottle == 0 and Clutch == 0 then
-					if self.SmoothRPM >= FadeRPM then
+		if selfTable.SoundMode == 2 then
+			if selfTable.FadeThrottle ~= selfTable.OldThrottle then
+				selfTable.OldThrottle = selfTable.FadeThrottle
+				if selfTable.FadeThrottle == 0 and Clutch == 0 then
+					if selfTable.SmoothRPM >= FadeRPM then
 						if IsCruise ~= true then
-							if self.LowRPM then
-								self.LowRPM:Stop()
+							if selfTable.LowRPM then
+								selfTable.LowRPM:Stop()
 							end
-							self.LowRPM = CreateSound(self, self.EngineSounds[ "RevDown" ] )
-							self.LowRPM:PlayEx(0,0)
+							selfTable.LowRPM = CreateSound(self, selfTable.EngineSounds[ "RevDown" ] )
+							selfTable.LowRPM:PlayEx(0,0)
 						end
 					end
 				end
 			end
 			
-			if Gear ~= self.OldGear then
-				if self.SmoothRPM >= FadeRPM and Gear > 3 then
+			if Gear ~= selfTable.OldGear then
+				if selfTable.SmoothRPM >= FadeRPM and Gear > 3 then
 					if Clutch ~= 1 then
-						if self.OldGear < Gear then
-							if self.HighRPM then
-								self.HighRPM:Stop()
+						if selfTable.OldGear < Gear then
+							if selfTable.HighRPM then
+								selfTable.HighRPM:Stop()
 							end
 							
-							self.HighRPM = CreateSound(self, self.EngineSounds[ "ShiftUpToHigh" ] )
-							self.HighRPM:PlayEx(0,0)
+							selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "ShiftUpToHigh" ] )
+							selfTable.HighRPM:PlayEx(0,0)
 							
-							if self.SmoothRPM > LimitRPM * 0.6 then
+							if selfTable.SmoothRPM > LimitRPM * 0.6 then
 								if math.random(0,4) >= 3 then
 									timer.Simple(0.4, function()
 										if not IsValid( self ) then return end
@@ -350,59 +353,59 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 								end
 							end
 						else
-							if self.FadeThrottle > 0 then
-								if self.HighRPM then
-									self.HighRPM:Stop()
+							if selfTable.FadeThrottle > 0 then
+								if selfTable.HighRPM then
+									selfTable.HighRPM:Stop()
 								end
 								
-								self.HighRPM = CreateSound(self, self.EngineSounds[ "ShiftDownToHigh" ] )
-								self.HighRPM:PlayEx(0,0)
+								selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "ShiftDownToHigh" ] )
+								selfTable.HighRPM:PlayEx(0,0)
 							end
 						end
 					end
 				else 
 					if Clutch ~= 1 then
-						if self.OldGear > Gear and self.FadeThrottle > 0 and Gear >= 3 then
-							if self.HighRPM then
-								self.HighRPM:Stop()
+						if selfTable.OldGear > Gear and selfTable.FadeThrottle > 0 and Gear >= 3 then
+							if selfTable.HighRPM then
+								selfTable.HighRPM:Stop()
 							end
 							
-							self.HighRPM = CreateSound(self, self.EngineSounds[ "ShiftDownToHigh" ] )
-							self.HighRPM:PlayEx(0,0)
+							selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "ShiftDownToHigh" ] )
+							selfTable.HighRPM:PlayEx(0,0)
 						else 
-							if self.HighRPM then
-								self.HighRPM:Stop()
+							if selfTable.HighRPM then
+								selfTable.HighRPM:Stop()
 							end
 							
-							if self.LowRPM then
-								self.LowRPM:Stop()
+							if selfTable.LowRPM then
+								selfTable.LowRPM:Stop()
 							end
 							
-							self.HighRPM = CreateSound(self, self.EngineSounds[ "HighRPM" ] )
-							self.LowRPM = CreateSound(self, self.EngineSounds[ "LowRPM" ])
-							self.HighRPM:PlayEx(0,0)
-							self.LowRPM:PlayEx(0,0)
+							selfTable.HighRPM = CreateSound(self, selfTable.EngineSounds[ "HighRPM" ] )
+							selfTable.LowRPM = CreateSound(self, selfTable.EngineSounds[ "LowRPM" ])
+							selfTable.HighRPM:PlayEx(0,0)
+							selfTable.LowRPM:PlayEx(0,0)
 						end
 					end
 				end
-				self.OldGear = Gear
+				selfTable.OldGear = Gear
 			end
 			
-			self.Idle:ChangeVolume( math.Clamp( math.min((self.SmoothRPM / IdleRPM) * 3,1.5 + self.FadeThrottle  * 0.5) * 0.7 - self.SmoothRPM / 2000 ,0,1) )
-			self.Idle:ChangePitch( math.Clamp( Pitch * 3,0,255) ) 
+			selfTable.Idle:ChangeVolume( math.Clamp( math.min((selfTable.SmoothRPM / IdleRPM) * 3,1.5 + selfTable.FadeThrottle  * 0.5) * 0.7 - selfTable.SmoothRPM / 2000 ,0,1) )
+			selfTable.Idle:ChangePitch( math.Clamp( Pitch * 3,0,255) ) 
 			
-			self.LowRPM:ChangeVolume( math.Clamp(Volume - (self.SmoothRPM - 2000) / 2000 * self.FadeThrottle,0,1) )
-			self.LowRPM:ChangePitch( math.Clamp( Pitch * self.PitchMulLow,0,255) )
+			selfTable.LowRPM:ChangeVolume( math.Clamp(Volume - (selfTable.SmoothRPM - 2000) / 2000 * selfTable.FadeThrottle,0,1) )
+			selfTable.LowRPM:ChangePitch( math.Clamp( Pitch * selfTable.PitchMulLow,0,255) )
 			
-			local hivol = math.max((self.SmoothRPM - 2000) / 2000,0) * Volume
-			self.HighRPM:ChangeVolume( self.FadeThrottle < 0.4 and hivol * self.FadeThrottle or hivol * self.FadeThrottle * 2.5 )
-			self.HighRPM:ChangePitch( math.Clamp( Pitch * self.PitchMulHigh,0,255) )
+			local hivol = math.max((selfTable.SmoothRPM - 2000) / 2000,0) * Volume
+			selfTable.HighRPM:ChangeVolume( selfTable.FadeThrottle < 0.4 and hivol * selfTable.FadeThrottle or hivol * selfTable.FadeThrottle * 2.5 )
+			selfTable.HighRPM:ChangePitch( math.Clamp( Pitch * selfTable.PitchMulHigh,0,255) )
 		else
-			if Gear ~= self.OldGear then
-				if self.SmoothRPM >= FadeRPM and Gear > 3 then
+			if Gear ~= selfTable.OldGear then
+				if selfTable.SmoothRPM >= FadeRPM and Gear > 3 then
 					if Clutch ~= 1 then
-						if self.OldGear < Gear then
-							if self.SmoothRPM > LimitRPM * 0.6 then
+						if selfTable.OldGear < Gear then
+							if selfTable.SmoothRPM > LimitRPM * 0.6 then
 								if math.random(0,4) >= 3 then
 									timer.Simple(0.4, function()
 										if not IsValid( self ) then return end
@@ -413,43 +416,42 @@ function ENT:ManageSounds( Active, fThrottle, LimitRPM )
 						end
 					end
 				end
-				self.OldGear = Gear
+				selfTable.OldGear = Gear
 			end
 		
 		
-			local IdlePitch = self.Idle_PitchMul
-			self.Idle:ChangeVolume( math.Clamp( math.min((self.SmoothRPM / IdleRPM) * 3,1.5 + self.FadeThrottle * 0.5) * 0.7 - self.SmoothRPM / 2000,0,1))
-			self.Idle:ChangePitch( math.Clamp( Pitch * 3 * IdlePitch,0,255) )
+			local IdlePitch = selfTable.Idle_PitchMul
+			selfTable.Idle:ChangeVolume( math.Clamp( math.min((selfTable.SmoothRPM / IdleRPM) * 3,1.5 + selfTable.FadeThrottle * 0.5) * 0.7 - selfTable.SmoothRPM / 2000,0,1))
+			selfTable.Idle:ChangePitch( math.Clamp( Pitch * 3 * IdlePitch,0,255) )
 			
-			local LowPitch = self.Mid_PitchMul
-			local LowVolume = self.Mid_VolumeMul
-			local LowFadeOutRPM = LimitRPM * (self.Mid_FadeOutRPMpercent / 100)
-			local LowFadeOutRate = LimitRPM * self.Mid_FadeOutRate
-			self.LowRPM:ChangeVolume( math.Clamp( (Volume - math.Clamp((self.SmoothRPM - LowFadeOutRPM) / LowFadeOutRate,0,1)) * LowVolume,0,1))
-			self.LowRPM:ChangePitch( math.Clamp(Pitch * LowPitch,0,255) ) 
+			local LowPitch = selfTable.Mid_PitchMul
+			local LowVolume = selfTable.Mid_VolumeMul
+			local LowFadeOutRPM = LimitRPM * (selfTable.Mid_FadeOutRPMpercent / 100)
+			local LowFadeOutRate = LimitRPM * selfTable.Mid_FadeOutRate
+			selfTable.LowRPM:ChangeVolume( math.Clamp( (Volume - math.Clamp((selfTable.SmoothRPM - LowFadeOutRPM) / LowFadeOutRate,0,1)) * LowVolume,0,1))
+			selfTable.LowRPM:ChangePitch( math.Clamp(Pitch * LowPitch,0,255) ) 
 			
-			local HighPitch = self.High_PitchMul
-			local HighVolume = self.High_VolumeMul
-			local HighFadeInRPM = LimitRPM * (self.High_FadeInRPMpercent / 100)
-			local HighFadeInRate = LimitRPM * self.High_FadeInRate
-			self.HighRPM:ChangeVolume( math.Clamp( math.Clamp((self.SmoothRPM - HighFadeInRPM) / HighFadeInRate,0,Volume) * HighVolume,0,1))
-			self.HighRPM:ChangePitch( math.Clamp(Pitch * HighPitch,0,255) ) 
+			local HighPitch = selfTable.High_PitchMul
+			local HighVolume = selfTable.High_VolumeMul
+			local HighFadeInRPM = LimitRPM * (selfTable.High_FadeInRPMpercent / 100)
+			local HighFadeInRate = LimitRPM * selfTable.High_FadeInRate
+			selfTable.HighRPM:ChangeVolume( math.Clamp( math.Clamp((selfTable.SmoothRPM - HighFadeInRPM) / HighFadeInRate,0,Volume) * HighVolume,0,1))
+			selfTable.HighRPM:ChangePitch( math.Clamp(Pitch * HighPitch,0,255) ) 
 			
-			local ThrottlePitch = self.Throttle_PitchMul
-			local ThrottleVolume = self.Throttle_VolumeMul
-			self.Valves:ChangeVolume( math.Clamp((self.SmoothRPM - 2000) / 2000,0,Volume) * (0.2 + 0.15 * self.FadeThrottle) * ThrottleVolume)
-			self.Valves:ChangePitch( math.Clamp(Pitch * ThrottlePitch,0,255) ) 
+			local ThrottlePitch = selfTable.Throttle_PitchMul
+			local ThrottleVolume = selfTable.Throttle_VolumeMul
+			selfTable.Valves:ChangeVolume( math.Clamp((selfTable.SmoothRPM - 2000) / 2000,0,Volume) * (0.2 + 0.15 * selfTable.FadeThrottle) * ThrottleVolume)
+			selfTable.Valves:ChangePitch( math.Clamp(Pitch * ThrottlePitch,0,255) ) 
 		end
 	end
 end
 
 function ENT:Backfire( damaged )
 	if not self:GetBackFire() and not damaged then return end
-	
 	if not self.ExhaustPositions then return end
-	
+
 	local expos = self.ExhaustPositions
-	
+
 	for i = 1, table.Count( expos ) do
 		if math.random(1,3) >= 2 or damaged then
 			local Pos = expos[i].pos

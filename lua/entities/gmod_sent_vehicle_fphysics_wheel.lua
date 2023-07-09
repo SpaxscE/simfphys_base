@@ -538,10 +538,11 @@ if CLIENT then
 
 	function ENT:Think()
 		local curtime = CurTime()
-		self.SmokeTimer = self.SmokeTimer or 0
-		if self.SmokeTimer < curtime then
+		local entTable = self:GetTable()
+		entTable.SmokeTimer = entTable.SmokeTimer or 0
+		if entTable.SmokeTimer < curtime then
 			self:ManageSmoke()
-			self.SmokeTimer = curtime + 0.005
+			entTable.SmokeTimer = curtime + 0.005
 		end
 		
 		self:NextThink( curtime )

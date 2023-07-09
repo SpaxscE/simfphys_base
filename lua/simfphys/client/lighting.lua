@@ -14,13 +14,11 @@ local RearProjectedLights = true
 local Shadows = false
 local vtable = istable( vtable ) and vtable or {}
 
+local IsValid = IsValid
 
 cvars.AddChangeCallback( "cl_simfphys_hidesprites", function( convar, oldValue, newValue ) SpritesDisabled = ( tonumber( newValue )~=0 ) end)
-
 cvars.AddChangeCallback( "cl_simfphys_frontlamps", function( convar, oldValue, newValue ) FrontProjectedLights = ( tonumber( newValue )~=0 ) end)
-
 cvars.AddChangeCallback( "cl_simfphys_rearlamps", function( convar, oldValue, newValue ) RearProjectedLights = ( tonumber( newValue )~=0 ) end)
-
 cvars.AddChangeCallback( "cl_simfphys_shadows", function( convar, oldValue, newValue ) Shadows = ( tonumber( newValue )~=0 ) end)
 
 
@@ -176,33 +174,34 @@ local function ManageProjTextures()
 	if vtable then
 		for i, ent in pairs(vtable) do
 			if IsValid(ent) then
+				local entTable = ent:GetTable()
 				local vel = ent:GetVelocity() * RealFrameTime()
 				
-				ent.triggers = {
+				entTable.triggers = {
 					[1] = ent:GetLightsEnabled(),
 					[2] = ent:GetLampsEnabled(),
 					[3] = ent:GetFogLightsEnabled(),
 					[4] = ent:GetIsBraking(),
 					[5] = (ent:GetGear() == 1),
-					[6] = ent.signal_left,
-					[7] = ent.signal_right,
+					[6] = entTable.signal_left,
+					[7] = entTable.signal_right,
 					[8] = ent:GetIsBraking(),
 					[9] = ent:GetIsBraking(),
 				}
 				
-				UpdateSubMats(ent, ent.triggers[1], ent.triggers[2], ent.triggers[4], ent.triggers[5] )
+				UpdateSubMats(ent, entTable.triggers[1], entTable.triggers[2], entTable.triggers[4], entTable.triggers[5] )
 				
-				for i, proj in pairs( ent.Projtexts ) do
-					local trigger = ent.triggers[proj.trigger]
-					local enable = ent.triggers[1] or trigger
+				for i, proj in pairs( entTable.Projtexts ) do
+					local trigger = entTable.triggers[proj.trigger]
+					local enable = entTable.triggers[1] or trigger
 					
 					if proj.Damaged or (proj.trigger == 2 and not FrontProjectedLights) or (proj.trigger == 4 and not RearProjectedLights) then 
 						trigger = false
 						enable = false
 					end
 					
-					if ent.HasSpecialTurnSignals then
-						if proj.trigger == 4 and (ent.triggers[6] or ent.triggers[7]) then
+					if entTable.HasSpecialTurnSignals then
+						if proj.trigger == 4 and (entTable.triggers[6] or entTable.triggers[7]) then
 							trigger = false
 						end
 					end
@@ -215,12 +214,12 @@ local function ManageProjTextures()
 							local brightness = (trigger and proj.ontrigger.brightness) or proj.brightness
 							
 							local thelamp = ProjectedTexture()
-							thelamp:SetBrightness( brightness ) 
+							thelamp:SetBrightness( brightness )
 							thelamp:SetTexture( proj.mat )
-							thelamp:SetColor( proj.col ) 
-							thelamp:SetEnableShadows( Shadows ) 
-							thelamp:SetFarZ( proj.FarZ ) 
-							thelamp:SetNearZ( proj.NearZ ) 
+							thelamp:SetColor( proj.col )
+							thelamp:SetEnableShadows( Shadows )
+							thelamp:SetFarZ( proj.FarZ )
+							thelamp:SetNearZ( proj.NearZ )
 							thelamp:SetFOV( proj.Fov )
 							
 							proj.projector = thelamp
@@ -251,12 +250,12 @@ local function ManageProjTextures()
 							
 							if proj.ontrigger.FarZ then
 								local FarZ = trigger and proj.ontrigger.FarZ or proj.FarZ
-								proj.projector:SetFarZ( FarZ ) 
+								proj.projector:SetFarZ( FarZ )
 							end
 						end
 						
-						proj.projector:SetPos( pos + vel ) 
-						proj.projector:SetAngles( ang ) 
+						proj.projector:SetPos( pos + vel )
+						proj.projector:SetAngles( ang )
 						proj.projector:Update()
 					end
 				end
@@ -267,7 +266,7 @@ local function ManageProjTextures()
 	end
 end
 
-local function SetupProjectedTextures( ent , vehiclelist )
+local function SetupProjectedTextures( ent, vehiclelist )
 	ent.Projtexts = {}
 	
 	local proj_col = vehiclelist.ModernLights and Color(215,240,255) or Color(220,205,160)
@@ -808,18 +807,19 @@ hook.Add( "PostDrawTranslucentRenderables", "simfphys_draw_sprites", function()
 	if vtable then
 		for i, ent in pairs( vtable ) do
 			if IsValid( ent ) then
+				local entTable = ent:GetTable()
 				if ent:GetEMSEnabled() then
 					DrawEMSLights( ent )
 				end
 			
 				if SpritesDisabled then return end
-				if not istable( ent.triggers ) then return end
+				if not istable( entTable.triggers ) then return end
 				
-				for _, sprite in pairs( ent.Sprites ) do
+				for _, sprite in pairs( entTable.Sprites ) do
 					
 					if not sprite.Damaged then
-						local regTrigger = ent.triggers[ sprite.trigger ]
-						local typeSpecial = (sprite.trigger == 8 and ent.triggers[ 6 ]) or (sprite.trigger == 9 and ent.triggers[7])
+						local regTrigger = entTable.triggers[ sprite.trigger ]
+						local typeSpecial = (sprite.trigger == 8 and entTable.triggers[ 6 ]) or (sprite.trigger == 9 and entTable.triggers[7])
 						if typeSpecial then regTrigger = false end
 						
 						if regTrigger or typeSpecial then
