@@ -30,4 +30,5 @@ local function sendppdata( length, ply )
 		net.WriteFloat( ent.VehicleData.suspensiontravel_rr )
 	net.Send( ply )
 end
-net.Receive("simfphys_request_ppdata", sendppdata)
+
+--net.Receive("simfphys_request_ppdata", sendppdata)
