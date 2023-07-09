@@ -408,16 +408,18 @@ function ENT:SimulateWheels(k_clutch,LimitRPM)
 			
 			if self.CustomWheels then
 				local GhostEnt = self.GhostWheels[i]
-				local Angle = GhostEnt:GetAngles()
-				local offsetang = WheelPos.IsFrontWheel and self.CustomWheelAngleOffset or (self.CustomWheelAngleOffset_R or self.CustomWheelAngleOffset)
-				local Direction = GhostEnt:LocalToWorldAngles( offsetang ):Forward()
-				local TFront = FrontWheelCanTurn and TurnWheel or 0
-				local TBack = RearWheelCanTurn and TurnWheel or 0
-				
-				local AngleStep = WheelPos.IsFrontWheel and TFront or TBack
-				Angle:RotateAroundAxis(Direction, WheelPos.IsRightWheel and AngleStep or -AngleStep)
-				
-				self.GhostWheels[i]:SetAngles( Angle )
+				if IsValid( GhostEnt ) then
+					local Angle = GhostEnt:GetAngles()
+					local offsetang = WheelPos.IsFrontWheel and self.CustomWheelAngleOffset or (self.CustomWheelAngleOffset_R or self.CustomWheelAngleOffset)
+					local Direction = GhostEnt:LocalToWorldAngles( offsetang ):Forward()
+					local TFront = FrontWheelCanTurn and TurnWheel or 0
+					local TBack = RearWheelCanTurn and TurnWheel or 0
+					
+					local AngleStep = WheelPos.IsFrontWheel and TFront or TBack
+					Angle:RotateAroundAxis(Direction, WheelPos.IsRightWheel and AngleStep or -AngleStep)
+					
+					self.GhostWheels[i]:SetAngles( Angle )
+				end
 			else
 				self:SetPoseParameter(self.VehicleData[ "pp_spin_" .. i ],self.VehicleData[ "spin_" .. i ]) 
 			end
