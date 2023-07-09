@@ -53,8 +53,8 @@ function ENT:PostEntityPaste( ply , ent , createdEntities )
 	self:SetThrottle( 0 )
 end
 
-function ENT:UpdateTransmitState() 
-	return TRANSMIT_ALWAYS
+function ENT:UpdateTransmitState()
+	return TRANSMIT_PVS	--TRANSMIT_ALWAYS
 end
 
 function ENT:SetupView()
