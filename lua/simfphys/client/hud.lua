@@ -34,7 +34,7 @@ local Hudmph = false
 local Hudmpg = false
 local Hudreal = false
 local isMouseSteer = false
-local hasCounterSteerEnabled = false
+local SteerVehicle = 0
 local slushbox = false
 local hudoffset_x = 0
 local hudoffset_y = 0
@@ -88,6 +88,7 @@ ms_key_freelook = GetConVar( "cl_simfphys_ms_keyfreelook" ):GetInt()
 
 local ms_pos_x = 0
 local sm_throttle = 0
+local s_smoothrpm = 0
 
 local function DrawCircle( X, Y, radius )
 	local segmentdist = 360 / ( 2 * math.pi * radius / 2 )
