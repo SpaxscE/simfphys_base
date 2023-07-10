@@ -129,6 +129,90 @@ hook.Add( "StartCommand", "simfphysmove", function( ply, cmd )
 	net.SendToServer()
 end)
 
+-- draw.arc function by bobbleheadbob
+-- https://dl.dropboxusercontent.com/u/104427432/Scripts/drawarc.lua
+-- https://facepunch.com/showthread.php?t=1438016&p=46536353&viewfull=1#post46536353
+
+local function PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bClockwise)
+	local triarc = {}
+	local deg2rad = math.pi / 180
+	
+	-- Correct start/end ang
+	local startang,endang = startang or 0, endang or 0
+	if bClockwise and (startang < endang) then
+		local temp = startang
+		startang = endang
+		endang = temp
+		temp = nil
+	elseif (startang > endang) then 
+		local temp = startang
+		startang = endang
+		endang = temp
+		temp = nil
+	end
+	
+	
+	-- Define step
+	local roughness = math.max(roughness or 1, 1)
+	local step = roughness
+	if bClockwise then
+		step = math.abs(roughness) * -1
+	end
+	
+	
+	-- Create the inner circle's points.
+	local inner = {}
+	local r = radius - thickness
+	for deg=startang, endang, step do
+		local rad = deg2rad * deg
+		table.insert(inner, {
+			x=cx+(math.cos(rad)*r),
+			y=cy+(math.sin(rad)*r)
+		})
+	end
+	
+	
+	-- Create the outer circle's points.
+	local outer = {}
+	for deg=startang, endang, step do
+		local rad = deg2rad * deg
+		table.insert(outer, {
+			x=cx+(math.cos(rad)*radius),
+			y=cy+(math.sin(rad)*radius)
+		})
+	end
+	
+	
+	-- Triangulize the points.
+	for tri=1,#inner*2 do -- twice as many triangles as there are degrees.
+		local p1,p2,p3
+		p1 = outer[math.floor(tri/2)+1]
+		p3 = inner[math.floor((tri+1)/2)+1]
+		if tri%2 == 0 then --if the number is even use outer.
+			p2 = outer[math.floor((tri+1)/2)]
+		else
+			p2 = inner[math.floor((tri+1)/2)]
+		end
+	
+		table.insert(triarc, {p1,p2,p3})
+	end
+	
+	-- Return a table of triangles to draw.
+	return triarc
+	
+end
+
+local function drawArc(arc)
+	for k,v in ipairs(arc) do
+		surface.DrawPoly(v)
+	end
+end
+
+local function drawArcColored(cx,cy,radius,thickness,startang,endang,roughness,color,bClockwise)
+	surface.SetDrawColor(color)
+	drawArc(PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bClockwise))
+end
+
 local function drawsimfphysHUD(vehicle,SeatCount)
 	if isMouseSteer and ShowHud_ms then
 		local MousePos = ms_pos_x
@@ -228,12 +312,12 @@ local function drawsimfphysHUD(vehicle,SeatCount)
 		draw.NoTexture()
 		
 		if AltHudarcs then
-			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,startang,math.min(endang,ang_pend),1,Color(255,255,255,150),true)
-			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,ang_pend,360,1,Color(120,0,0,230),true)
-			draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,math.Round(ang_pend - 1,0),startang + (s_smoothrpm / maxrpm) * 255,1,Color(255,0,0,140),true)
-			--draw.Arc(x + o_x,y + o_y,radius / 3.5,radius / 66,startang,360,15,Color(255,255,255,50),true)
-			--draw.Arc(x + o_x,y + o_y,radius,radius / 6.66,startang,ang_pend,1,Color(150,150,150,50),true)
-			--draw.Arc(x + o_x,y + o_y,radius / 5,radius / 70,0,360,15,center_ncol,true)
+			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,startang,math.min(endang,ang_pend),1,Color(255,255,255,150),true)
+			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,ang_pend,360,1,Color(120,0,0,230),true)
+			drawArcColored(x + o_x,y + o_y,radius,radius / 6.66,math.Round(ang_pend - 1,0),startang + (s_smoothrpm / maxrpm) * 255,1,Color(255,0,0,140),true)
+			--drawArc(x + o_x,y + o_y,radius / 3.5,radius / 66,startang,360,15,Color(255,255,255,50),true)
+			--drawArc(x + o_x,y + o_y,radius,radius / 6.66,startang,ang_pend,1,Color(150,150,150,50),true)
+			--drawArc(x + o_x,y + o_y,radius / 5,radius / 70,0,360,15,center_ncol,true)
 		else
 			if HUD_5 then
 				surface.SetMaterial( HUD_5 )
@@ -618,91 +702,6 @@ hook.Add( "HUDPaint", "simfphys_HUD", function()
 		end
 	end
 end)
-
--- draw.arc function by bobbleheadbob
--- https://dl.dropboxusercontent.com/u/104427432/Scripts/drawarc.lua
--- https://facepunch.com/showthread.php?t=1438016&p=46536353&viewfull=1#post46536353
-
-function surface.PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bClockwise)
-	local triarc = {}
-	local deg2rad = math.pi / 180
-	
-	-- Correct start/end ang
-	local startang,endang = startang or 0, endang or 0
-	if bClockwise and (startang < endang) then
-		local temp = startang
-		startang = endang
-		endang = temp
-		temp = nil
-	elseif (startang > endang) then 
-		local temp = startang
-		startang = endang
-		endang = temp
-		temp = nil
-	end
-	
-	
-	-- Define step
-	local roughness = math.max(roughness or 1, 1)
-	local step = roughness
-	if bClockwise then
-		step = math.abs(roughness) * -1
-	end
-	
-	
-	-- Create the inner circle's points.
-	local inner = {}
-	local r = radius - thickness
-	for deg=startang, endang, step do
-		local rad = deg2rad * deg
-		table.insert(inner, {
-			x=cx+(math.cos(rad)*r),
-			y=cy+(math.sin(rad)*r)
-		})
-	end
-	
-	
-	-- Create the outer circle's points.
-	local outer = {}
-	for deg=startang, endang, step do
-		local rad = deg2rad * deg
-		table.insert(outer, {
-			x=cx+(math.cos(rad)*radius),
-			y=cy+(math.sin(rad)*radius)
-		})
-	end
-	
-	
-	-- Triangulize the points.
-	for tri=1,#inner*2 do -- twice as many triangles as there are degrees.
-		local p1,p2,p3
-		p1 = outer[math.floor(tri/2)+1]
-		p3 = inner[math.floor((tri+1)/2)+1]
-		if tri%2 == 0 then --if the number is even use outer.
-			p2 = outer[math.floor((tri+1)/2)]
-		else
-			p2 = inner[math.floor((tri+1)/2)]
-		end
-	
-		table.insert(triarc, {p1,p2,p3})
-	end
-	
-	-- Return a table of triangles to draw.
-	return triarc
-	
-end
-
-function surface.DrawArc(arc)
-	for k,v in ipairs(arc) do
-		surface.DrawPoly(v)
-	end
-end
-
-function draw.Arc(cx,cy,radius,thickness,startang,endang,roughness,color,bClockwise)
-	surface.SetDrawColor(color)
-	surface.DrawArc(surface.PrecacheArc(cx,cy,radius,thickness,startang,endang,roughness,bClockwise))
-end
-
 
 local TipColor = Color( 0, 127, 255, 255 )
 hook.Add("HUDPaint", "simfphys_vehicleditorinfo", function()
