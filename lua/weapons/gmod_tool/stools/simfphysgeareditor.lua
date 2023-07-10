@@ -47,7 +47,8 @@ function TOOL:LeftClick( trace )
 		local VehicleList = list.Get( "simfphys_vehicles" )[vname]
 		
 		local gears = {math.Clamp(self:GetClientNumber( "gear_r" ), -5, -0.001),0}
-		for i = 1, self:GetClientNumber( "numgears" ) do
+		local gearCount = math.Clamp( self:GetClientNumber( "numgears" ), 1, 12 )
+		for i = 1, gearCount do
 			local index = i + 2
 			gears[index] = math.Clamp( self:GetClientNumber( "gear_"..i ), 0.001, 5)
 		end
