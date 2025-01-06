@@ -28,8 +28,14 @@ if SERVER then
 		self:SetSolid( SOLID_VPHYSICS )
 		self:SetCollisionGroup( COLLISION_GROUP_PASSABLE_DOOR ) 
 		self:SetUseType( SIMPLE_USE )
-		self:AddFlags( FL_OBJECT )
+
 		self:AddEFlags( EFL_NO_PHYSCANNON_INTERACTION )
+
+		-- crazy secrets have been leaked into the main frame
+		self:AddEFlags( EFL_DONTBLOCKLOS )
+
+		-- useless, cuz this doesnt run on lvs' entity relationship system anymore :(
+		self:AddFlags( FL_OBJECT )
 
 		self:DrawShadow( false )
 

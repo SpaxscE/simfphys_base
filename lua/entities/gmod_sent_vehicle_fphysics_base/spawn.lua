@@ -16,7 +16,12 @@ function ENT:Initialize()
 	self:SetNotSolid( true )
 	self:SetUseType( SIMPLE_USE )
 	--self:SetRenderMode( RENDERMODE_TRANSALPHA ) -- fix broken decals
-	self:AddFlags( FL_OBJECT ) -- this allows npcs to see this entity
+
+	-- crazy secrets have been leaked into the main frame
+	self:AddEFlags( EFL_DONTBLOCKLOS )
+
+	-- useless, cuz this doesnt run on lvs' entity relationship system anymore :(
+	self:AddFlags( FL_OBJECT )
 
 	if not IsServerOK() then
 
