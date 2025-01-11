@@ -197,7 +197,7 @@ local V = {
 		FrontWheelRadius = 18,
 		RearWheelRadius = 20,
 		
-		SeatOffset = Vector(-1,0,5),
+		SeatOffset = Vector(-1,0,-5),
 		SeatPitch = 3,
 		
 		PassengerSeats = {
@@ -218,12 +218,12 @@ local V = {
 			}
 		},
 		
-		FrontHeight = 11.5,
+		FrontHeight = 19.5,
 		FrontConstant = 27000,
 		FrontDamping = 2800,
 		FrontRelativeDamping = 2800,
 		
-		RearHeight = 8.5,
+		RearHeight = 16.5,
 		RearConstant = 32000,
 		RearDamping = 2900,
 		RearRelativeDamping = 2900,
