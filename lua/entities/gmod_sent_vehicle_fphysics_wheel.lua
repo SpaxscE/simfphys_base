@@ -444,11 +444,36 @@ if SERVER then
 		if data.Speed > 100 and data.DeltaTime > 0.2 then
 			if data.Speed > 400 then 
 				self:EmitSound( "Rubber_Tire.ImpactHard" )
-				self:EmitSound( "simulated_vehicles/suspension_creak_".. math.random(1,6) ..".ogg" )
 			else 
 				self:EmitSound( "Rubber.ImpactSoft" )
 			end
 		end
+
+		local base = self:GetBaseEnt()
+		local EntTable = self:GetTable()
+
+		if not IsValid( base ) or not EntTable.Radius then return end
+
+		local Up = base:GetUp()
+
+		if Up.z < 0.9 then return end
+
+		local Radius = EntTable.Radius
+		local BumpPos = data.HitPos + Up * Radius
+		local SurfacePos = self:GetPos()
+		local ToBump = BumpPos - SurfacePos
+		local BumpHeight = ToBump.z
+
+		if BumpHeight < 2 or BumpHeight > math.max( Radius - 1, 1 ) then return end
+
+		if math.deg( math.acos( math.Clamp( ToBump:GetNormalized():Dot( data.OurOldVelocity:GetNormalized() ) ,-1,1) ) ) > 65 then return end
+
+		if self:GetVelocity():LengthSqr() < 8000 then return end
+
+		self:EmitSound( "simulated_vehicles/suspension_creak_".. math.random(1,6) ..".ogg", 70, 100, math.min( BumpHeight / 5, 1 ) ^ 2 )
+
+		physobj:SetPos( physobj:GetPos() + Up * BumpHeight )
+		physobj:SetVelocityInstantaneous( data.OurOldVelocity )
 	end
 
 	function ENT:OnTakeDamage( dmginfo )
